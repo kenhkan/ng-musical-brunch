@@ -33,6 +33,7 @@ module.exports = (grunt) ->
 
   # Load Grunt tasks
   grunt.loadNpmTasks 'grunt-contrib-jshint'
+  grunt.loadNpmTasks 'grunt-contrib-clean'
   grunt.loadNpmTasks 'grunt-contrib-copy'
   grunt.loadNpmTasks 'grunt-contrib-watch'
   grunt.loadNpmTasks 'grunt-contrib-uglify'
@@ -88,6 +89,13 @@ module.exports = (grunt) ->
         tagMessage: 'Version %VERSION%'
         push: false
         pushTo: 'origin'
+
+    # Clean house
+    clean:
+      source: ["#{sourceDir}/vendor", "#{sourceDir}/_layout.ejs"]
+      compile: ["#{compileDir}/vendor", "#{compileDir}/_layout.ejs"]
+      build: ["#{sourceDir}/vendor", "#{sourceDir}/_layout.ejs"]
+      full: [vendorDir, compileDir, buildDir]
 
     ## Build-related tasks
 
@@ -184,8 +192,11 @@ module.exports = (grunt) ->
         src: ['<%= files.vendor.local %>']
         dest: "#{sourceDir}/vendor/"
       compile:
-        src: ['<%= files.vendor.localSrc %>']
-        dest: ['<%= files.vendor.localCompileDest %>']
+        expand: true
+        flatten: true
+        cwd: vendorDir
+        src: ['<%= files.vendor.local %>']
+        dest: "#{compileDir}/vendor/"
 
     # Actually building `index.html`
     index:
@@ -224,15 +235,15 @@ module.exports = (grunt) ->
       harpCompile:
         cmd: "node_modules/.bin/harp compile #{sourceDir} #{compileDir}"
 
-  # Build tasks
+  # Build tasks (NOTE: order is significant!)
   grunt.registerTask 'default', ['install', 'source', 'compile', 'build']
   grunt.registerTask 'install', ['exec:bower']
   grunt.registerTask 'watch', ['index:source', 'exec:harpServer']
-  grunt.registerTask 'source', ['copy:source', 'coffeelint', 'index:source']
+  grunt.registerTask 'source', ['clean:source', 'copy:source', 'coffeelint', 'index:source']
   # TODO review and include karma
   #grunt.registerTask 'source', ['copy:source', 'coffeelint', 'index:source', 'karmaconfig', 'karma:continuous']
-  grunt.registerTask 'compile', ['copy:compile', 'exec:harpCompile', 'jshint', 'index:compile']
-  grunt.registerTask 'build', ['ngmin', 'concat', 'uglify', 'index:build']
+  grunt.registerTask 'compile', ['clean:compile', 'exec:harpCompile', 'jshint', 'index:compile', 'copy:compile']
+  grunt.registerTask 'build', ['clean:build', 'ngmin', 'concat', 'uglify', 'index:build']
 
   # Get all scripts
   filterScripts = (files) ->
@@ -257,8 +268,9 @@ module.exports = (grunt) ->
     styles = filterStyles(@filesSrc).map (file) ->
       file.replace extractRE, '$1.css'
 
-    # Add remote vendor files to the *beginning* as CDN-enabled libraries are
-    # usually foundational libraries
+    # Add vendor files to the *beginning* as external libraries take
+    # precedence. Remote libraries first, then local libraries
+    scripts.unshift local for local in vendorFiles.local
     scripts.unshift remote for remote in vendorFiles.remote
 
     # Copy over the entry point and compile references to the scripts and styles
