@@ -1,1 +1,3 @@
-public/vendor
+node_modules
+vendor
+_layout.ejs
