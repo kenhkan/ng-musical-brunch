@@ -6,19 +6,26 @@ module.exports = (grunt) ->
   # Self-managed references for third-party files. These are either relative to
   # project root or HTTP(S) addresses
   vendorFiles =
-    # Local files: relative to where Bower components are installed
-    local: [
-      'angular-bootstrap/ui-bootstrap.min.js'
-      'angular-mocks/angular-mocks.js'
-      'angular-ui-router/release/angular-ui-router.min.js'
-      'angular-ui-utils/modules/route/route.min.js'
-    ]
-    # Remote files: absolute HTTP(S) URLs
-    remote: [
-      'https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js'
-      'https://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js'
-      'https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js'
-    ]
+    scripts:
+      # Local files: relative to where Bower components are installed
+      local: [
+        'angular-bootstrap/ui-bootstrap.min.js'
+        'angular-mocks/angular-mocks.js'
+        'angular-ui-router/release/angular-ui-router.min.js'
+        'angular-ui-utils/modules/route/route.min.js'
+      ]
+      # Remote files: absolute HTTP(S) URLs
+      remote: [
+        'https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js'
+        'https://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js'
+        'https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js'
+      ]
+    styles:
+      local: []
+      remote: [
+        "https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"
+        "https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css"
+      ]
 
   # Paths
   sourceDir = 'src' # Where the source lives
@@ -115,7 +122,7 @@ module.exports = (grunt) ->
         options:
           banner: '<%= meta.banner %>'
         src: [
-          '<%= files.vendor.local %>'
+          '<%= files.vendor.scripts.local %>'
           '(function ( window, angular, undefined ) {'
           '<%= files.compile.js %>'
           '})( window, window.angular );'
@@ -189,13 +196,13 @@ module.exports = (grunt) ->
         expand: true
         flatten: true
         cwd: vendorDir
-        src: ['<%= files.vendor.local %>']
+        src: ['<%= files.vendor.scripts.local %>']
         dest: "#{sourceDir}/vendor/"
       compile:
         expand: true
         flatten: true
         cwd: vendorDir
-        src: ['<%= files.vendor.local %>']
+        src: ['<%= files.vendor.scripts.local %>']
         dest: "#{compileDir}/vendor/"
 
     # Actually building `index.html`
@@ -270,8 +277,12 @@ module.exports = (grunt) ->
 
     # Add vendor files to the *beginning* as external libraries take
     # precedence. Remote libraries first, then local libraries
-    scripts.unshift local for local in vendorFiles.local
-    scripts.unshift remote for remote in vendorFiles.remote
+    scripts.unshift local for local in vendorFiles.scripts.local
+    scripts.unshift remote for remote in vendorFiles.scripts.remote
+
+    # Do the same for styles
+    styles.unshift local for local in vendorFiles.styles.local
+    styles.unshift remote for remote in vendorFiles.styles.remote
 
     # Copy over the entry point and compile references to the scripts and styles
     grunt.file.copy 'index.html', "#{@data.dir}/_layout.ejs",

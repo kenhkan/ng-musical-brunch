@@ -16,18 +16,12 @@
     <meta property="og:image" content="http://example.com/logo.png"/>
     <meta property="og:description" content="Description"/>
 
-    <!-- CDN-enabled styles -->
-    <link href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet"/>
-    <link href="https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet"/>
-
     <!-- Compiled CSS --><% styles.forEach( function ( file ) { %>
     <link rel="stylesheet" type="text/css" href="<%= file %>"/><% }); %>
 
     <!--[if IE 7>
     <link rel="stylesheet" href="assets/font-awesome-ie7.min.css />
     <![endif]-->
-
-    <!-- CDN-enabled scripts -->
 
     <!-- Compiled JavaScript --><% scripts.forEach( function ( file ) { %>
     <script type="text/javascript" src="<%= file %>"></script><% }); %>
