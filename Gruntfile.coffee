@@ -313,11 +313,16 @@ module.exports = (grunt) ->
           data:
             scripts: jsFiles
 
-  # Build tasks (NOTE: order is significant!)
-  grunt.registerTask 'default', ['install', 'source', 'compile', 'build']
-  grunt.registerTask 'install', ['exec:bower']
-  grunt.registerTask 'watch', ['index:source', 'exec:harpServer']
+  ## Build tasks
 
+  # Usually you just want to run `grunt` to get the deployed code
+  grunt.registerTask 'default', ['install', 'source', 'compile', 'build']
+  # Or spin up a Harp server for development by running `grunt watch`
+  grunt.registerTask 'watch', ['index:source', 'exec:harpServer']
+  # Or just install dependencies
+  grunt.registerTask 'install', ['exec:bower']
+
+  # Make sure our HTML is referencing all our scripts and styles
   grunt.registerTask 'source', [
     'clean:source' # Clean the source directory first
     'coffeelint' # Then check CoffeeScripts are style-compliant
@@ -325,8 +330,10 @@ module.exports = (grunt) ->
     'index:source' # Build `index.html`
   ]
 
-  # TODO review and include karma
-  #grunt.registerTask 'source', ['copy:source', 'coffeelint', 'index:source', 'karmaconfig', 'karma:continuous']
+  # TODO include karma in development
+  #grunt.registerTask 'source', ['karmaconfig', 'karma:continuous']
+
+  # Compile for delivery (but not minified)
   grunt.registerTask 'compile', [
     'clean:compile' # Clean the compile directory
     'clean:source' # Clean the source directory as well because we need to compile from source
@@ -337,6 +344,7 @@ module.exports = (grunt) ->
     'copy:assetsToCompile' # As name
   ]
 
+  # The ultimate deployment package
   grunt.registerTask 'build', [
     # Clean up first
     'clean:build'
