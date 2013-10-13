@@ -6,8 +6,19 @@ module.exports = (grunt) ->
   # Self-managed references for third-party files. These are either relative to
   # project root or HTTP(S) addresses
   vendorFiles =
-    js: []
-    css: []
+    # Local files: relative to where Bower components are installed
+    local: [
+      'angular-bootstrap/ui-bootstrap.min.js'
+      'angular-mocks/angular-mocks.js'
+      'angular-ui-router/release/angular-ui-router.min.js'
+      'angular-ui-utils/modules/route/route.min.js'
+    ]
+    # Remote files: absolute HTTP(S) URLs
+    remote: [
+      'https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js'
+      'https://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js'
+      'https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js'
+    ]
 
   # Paths
   sourceDir = 'src' # Where the source lives
@@ -30,6 +41,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-coffeelint'
   grunt.loadNpmTasks 'grunt-karma'
   grunt.loadNpmTasks 'grunt-ngmin'
+  grunt.loadNpmTasks 'grunt-exec'
 
   # Configuration
   grunt.initConfig
@@ -95,7 +107,7 @@ module.exports = (grunt) ->
         options:
           banner: '<%= meta.banner %>'
         src: [
-          '<%= files.vendor.js %>'
+          '<%= files.vendor.local %>'
           '(function ( window, angular, undefined ) {'
           '<%= files.compile.js %>'
           '})( window, window.angular );'
@@ -106,7 +118,6 @@ module.exports = (grunt) ->
         options:
           banner: '<%= meta.banner %>'
         src: [
-          '<%= files.vendor.css %>'
           '<%= files.compile.css %>'
         ]
         dest: "#{buildDir}/<%= pkg.name %>-<%= pkg.version %>.css"
@@ -164,12 +175,23 @@ module.exports = (grunt) ->
 
     ## Build `index.html` to include references to all JS and CSS files
 
+    # Copy over local vendor files
+    copy:
+      source:
+        expand: true
+        flatten: true
+        cwd: vendorDir
+        src: ['<%= files.vendor.local %>']
+        dest: "#{sourceDir}/vendor/"
+      compile:
+        src: ['<%= files.vendor.localSrc %>']
+        dest: ['<%= files.vendor.localCompileDest %>']
+
+    # Actually building `index.html`
     index:
       source:
         dir: sourceDir
         src: [
-          '<%= files.vendor.js %>'
-          '<%= files.vendor.css %>'
           '<%= files.source.js %>'
           '<%= files.source.coffee %>'
           '<%= files.source.css %>'
@@ -178,8 +200,6 @@ module.exports = (grunt) ->
       compile:
         dir: compileDir
         src: [
-          '<%= files.vendor.js %>'
-          '<%= files.vendor.css %>'
           '<%= files.compile.js %>'
           '<%= files.compile.css %>'
         ]
@@ -191,11 +211,27 @@ module.exports = (grunt) ->
           '<%= concat.css.dest %>'
         ]
 
+    ## Execute arbitrary commands
+
+    exec:
+      # Install Bower components
+      bower:
+        cmd: 'node_modules/.bin/bower install'
+      # Run Harp server
+      harpServer:
+        cmd: "node_modules/.bin/harp server #{sourceDir}"
+      # Compile code using Harp
+      harpCompile:
+        cmd: "node_modules/.bin/harp compile #{sourceDir} #{compileDir}"
+
   # Build tasks
-  grunt.registerTask 'watch', ['index:source']
-  grunt.registerTask 'default', ['source', 'compile', 'build']
-  grunt.registerTask 'source', ['coffeelint', 'index:source', 'karmaconfig', 'karma:continuous']
-  grunt.registerTask 'compile', ['jshint', 'index:compile']
+  grunt.registerTask 'default', ['install', 'source', 'compile', 'build']
+  grunt.registerTask 'install', ['exec:bower']
+  grunt.registerTask 'watch', ['index:source', 'exec:harpServer']
+  grunt.registerTask 'source', ['copy:source', 'coffeelint', 'index:source']
+  # TODO review and include karma
+  #grunt.registerTask 'source', ['copy:source', 'coffeelint', 'index:source', 'karmaconfig', 'karma:continuous']
+  grunt.registerTask 'compile', ['copy:compile', 'exec:harpCompile', 'jshint', 'index:compile']
   grunt.registerTask 'build', ['ngmin', 'concat', 'uglify', 'index:build']
 
   # Get all scripts
@@ -222,7 +258,7 @@ module.exports = (grunt) ->
       file.replace extractRE, '$1.css'
 
     # Copy over the entry point and compile references to the scripts and styles
-    grunt.file.copy 'index.html', @data.dir + '/_layout.ejs',
+    grunt.file.copy 'index.html', "#{@data.dir}/_layout.ejs",
       process: (contents, path) ->
         grunt.template.process contents,
           data:
