@@ -1,6 +1,11 @@
 {
   "name": "boilerplate",
   "version": "0.0.0",
+  "licenses": [
+    {
+      "type": "MIT"
+    }
+  ],
   "dependencies": {},
   "devDependencies": {
     "bower": "~1.2.7",
@@ -11,6 +16,7 @@
     "grunt-contrib-jshint": "~0.4.3",
     "grunt-contrib-watch": "~0.4.0",
     "grunt-contrib-uglify": "~0.2.0",
+    "grunt-contrib-concat": "~ 0.3.0",
     "grunt-karma": "~0.5.0",
     "grunt-ngmin": "0.0.2",
     "grunt-coffeelint": "0.0.6",

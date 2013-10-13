@@ -44,6 +44,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-copy'
   grunt.loadNpmTasks 'grunt-contrib-watch'
   grunt.loadNpmTasks 'grunt-contrib-uglify'
+  grunt.loadNpmTasks 'grunt-contrib-concat'
   grunt.loadNpmTasks 'grunt-conventional-changelog'
   grunt.loadNpmTasks 'grunt-bump'
   grunt.loadNpmTasks 'grunt-coffeelint'
@@ -71,8 +72,6 @@ module.exports = (grunt) ->
         js: ["#{compileDir}/**/*.js", "!#{compileDir}/**/*.spec.js"]
         jsTest: ["!#{compileDir}/**/*.spec.js"]
         css: ["#{compileDir}/**/*.css"]
-      build:
-        js: ["#{buildDir}/**/*.js"]
 
     # Metadata like the banner to be inserted above released source code
     meta:
@@ -118,20 +117,19 @@ module.exports = (grunt) ->
 
     # Then concatenate all JS and CSS files into respective release files
     concat:
-      js:
-        options:
-          banner: '<%= meta.banner %>'
+      options:
+        banner: '<%= meta.banner %>'
+
+      scripts:
         src: [
           '<%= files.vendor.scripts.local %>'
-          '(function ( window, angular, undefined ) {'
+          "#{configDir}/module_prefix.js"
           '<%= files.compile.js %>'
-          '})( window, window.angular );'
+          "#{configDir}/module_suffix.js"
         ]
         dest: "#{buildDir}/<%= pkg.name %>-<%= pkg.version %>.js"
 
-      css:
-        options:
-          banner: '<%= meta.banner %>'
+      styles:
         src: [
           '<%= files.compile.css %>'
         ]
@@ -139,11 +137,11 @@ module.exports = (grunt) ->
 
     # Finally uglify the JS release file
     uglify:
+      options:
+        banner: '<%= meta.banner %>'
       compile:
-        options:
-          banner: '<%= meta.banner %>'
         files:
-          '<%= concat.js.dest %>': '<%= concat.js.dest %>'
+          '<%= concat.scripts.dest %>': '<%= concat.scripts.dest %>'
 
     ## Style police
 
@@ -190,20 +188,27 @@ module.exports = (grunt) ->
 
     ## Build `index.html` to include references to all JS and CSS files
 
-    # Copy over local vendor files
     copy:
+      # Copy over local vendor files
       source:
         expand: true
         flatten: true
         cwd: vendorDir
         src: ['<%= files.vendor.scripts.local %>']
         dest: "#{sourceDir}/vendor/"
+      # Same for compiling
       compile:
         expand: true
         flatten: true
         cwd: vendorDir
         src: ['<%= files.vendor.scripts.local %>']
         dest: "#{compileDir}/vendor/"
+      # Just copy over `index.html` from source when building
+      build:
+        expand: true
+        cwd: compileDir
+        src: 'index.html'
+        dest: buildDir
 
     # Actually building `index.html`
     index:
@@ -225,8 +230,8 @@ module.exports = (grunt) ->
       build:
         dir: buildDir
         src: [
-          '<%= concat.js.dest %>'
-          '<%= concat.css.dest %>'
+          '<%= concat.scripts.dest %>'
+          '<%= concat.styles.dest %>'
         ]
 
     ## Execute arbitrary commands
@@ -250,7 +255,7 @@ module.exports = (grunt) ->
   # TODO review and include karma
   #grunt.registerTask 'source', ['copy:source', 'coffeelint', 'index:source', 'karmaconfig', 'karma:continuous']
   grunt.registerTask 'compile', ['clean:compile', 'exec:harpCompile', 'jshint', 'index:compile', 'copy:compile']
-  grunt.registerTask 'build', ['clean:build', 'ngmin', 'concat', 'uglify', 'index:build']
+  grunt.registerTask 'build', ['clean:build', 'ngmin', 'concat', 'uglify', 'index:build', 'copy:build']
 
   # Get all scripts
   filterScripts = (files) ->
