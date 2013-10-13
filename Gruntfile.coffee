@@ -10,10 +10,11 @@ module.exports = (grunt) ->
     css: []
 
   # Paths
-  sourceDir = 'public' # Where the source lives
-  compileDir = 'www' # Where pre-processed and minified (except JS) code lives
+  sourceDir = 'src' # Where the source lives
+  compileDir = 'lib' # Where pre-processed and minified (except JS) code lives
   buildDir = 'build' # Where fully minified and concatenated output code lives
   configDir = 'config' # Where to put config files
+  vendorDir = 'bower_components' # Where the vendor files are originally
 
   ################################
   ## DO NOT EDIT ANYTHING BELOW ##
