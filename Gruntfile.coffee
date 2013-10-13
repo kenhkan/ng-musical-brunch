@@ -257,6 +257,10 @@ module.exports = (grunt) ->
     styles = filterStyles(@filesSrc).map (file) ->
       file.replace extractRE, '$1.css'
 
+    # Add remote vendor files to the *beginning* as CDN-enabled libraries are
+    # usually foundational libraries
+    scripts.unshift remote for remote in vendorFiles.remote
+
     # Copy over the entry point and compile references to the scripts and styles
     grunt.file.copy 'index.html', "#{@data.dir}/_layout.ejs",
       process: (contents, path) ->
