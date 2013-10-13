@@ -98,10 +98,9 @@ module.exports = (grunt) ->
 
     # Clean house
     clean:
-      source: ["#{sourceDir}/vendor", "#{sourceDir}/_layout.ejs"]
-      compile: ["#{compileDir}/vendor", "#{compileDir}/_layout.ejs"]
-      build: ["#{sourceDir}/vendor", "#{sourceDir}/_layout.ejs"]
-      full: [vendorDir, compileDir, buildDir]
+      source: ["#{sourceDir}/vendor"]
+      compile: ["#{compileDir}/vendor"]
+      full: [compileDir, buildDir, "#{sourceDir}/_layout.ejs"]
 
     ## Build-related tasks
 
@@ -146,8 +145,6 @@ module.exports = (grunt) ->
     ## Style police
 
     jshint:
-      src: '<%= files.compile.js %>'
-      test: '<%= files.compile.jsTest %>'
       options:
         curly: true
         immed: true
@@ -156,7 +153,8 @@ module.exports = (grunt) ->
         sub: true
         boss: true
         eqnull: true
-      globals: {}
+      src: '<%= files.compile.js %>'
+      test: '<%= files.compile.jsTest %>'
 
     coffeelint:
       options:
@@ -220,20 +218,6 @@ module.exports = (grunt) ->
           '<%= files.source.css %>'
         ]
 
-      compile:
-        dir: compileDir
-        src: [
-          '<%= files.compile.js %>'
-          '<%= files.compile.css %>'
-        ]
-
-      build:
-        dir: buildDir
-        src: [
-          '<%= concat.scripts.dest %>'
-          '<%= concat.styles.dest %>'
-        ]
-
     ## Execute arbitrary commands
 
     exec:
@@ -246,16 +230,6 @@ module.exports = (grunt) ->
       # Compile code using Harp
       harpCompile:
         cmd: "node_modules/.bin/harp compile #{sourceDir} #{compileDir}"
-
-  # Build tasks (NOTE: order is significant!)
-  grunt.registerTask 'default', ['install', 'source', 'compile', 'build']
-  grunt.registerTask 'install', ['exec:bower']
-  grunt.registerTask 'watch', ['index:source', 'exec:harpServer']
-  grunt.registerTask 'source', ['clean:source', 'copy:source', 'coffeelint', 'index:source']
-  # TODO review and include karma
-  #grunt.registerTask 'source', ['copy:source', 'coffeelint', 'index:source', 'karmaconfig', 'karma:continuous']
-  grunt.registerTask 'compile', ['clean:compile', 'exec:harpCompile', 'jshint', 'index:compile', 'copy:compile']
-  grunt.registerTask 'build', ['clean:build', 'ngmin', 'concat', 'uglify', 'index:build', 'copy:build']
 
   # Get all scripts
   filterScripts = (files) ->
@@ -289,15 +263,19 @@ module.exports = (grunt) ->
     styles.unshift local for local in vendorFiles.styles.local
     styles.unshift remote for remote in vendorFiles.styles.remote
 
+    # Use non-EJS syntax to insert `yield`
+    grunt.template.addDelimiters 'percentage', '{%', '%}'
+
     # Copy over the entry point and compile references to the scripts and styles
     grunt.file.copy 'index.html', "#{@data.dir}/_layout.ejs",
       process: (contents, path) ->
         grunt.template.process contents,
+          delimiters: 'percentage'
           data:
             scripts: scripts
             styles: styles
             version: grunt.config 'pkg.version'
-            yield: '<%= yield %>'
+            yield: '<%- yield %>'
 
   ###
   # TODO review
@@ -312,3 +290,13 @@ module.exports = (grunt) ->
         grunt.template.process contents,
           data:
             scripts: jsFiles
+
+  # Build tasks (NOTE: order is significant!)
+  grunt.registerTask 'default', ['install', 'source', 'compile', 'build']
+  grunt.registerTask 'install', ['exec:bower']
+  grunt.registerTask 'watch', ['index:source', 'exec:harpServer']
+  grunt.registerTask 'source', ['clean:source', 'coffeelint', 'copy:source', 'index:source']
+  # TODO review and include karma
+  #grunt.registerTask 'source', ['copy:source', 'coffeelint', 'index:source', 'karmaconfig', 'karma:continuous']
+  grunt.registerTask 'compile', ['clean:source', 'clean:compile', 'exec:harpCompile', 'jshint', 'copy:compile']
+  grunt.registerTask 'build', ['ngmin', 'concat', 'uglify', 'copy:build']

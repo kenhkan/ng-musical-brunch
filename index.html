@@ -16,17 +16,17 @@
     <meta property="og:image" content="http://example.com/logo.png"/>
     <meta property="og:description" content="Description"/>
 
-    <!-- Compiled CSS --><% styles.forEach( function ( file ) { %>
-    <link rel="stylesheet" type="text/css" href="<%= file %>"/><% }); %>
+    <!-- Compiled CSS -->{% styles.forEach( function ( file ) { %}
+    <link rel="stylesheet" type="text/css" href="{%= file %}"/>{% }); %}
 
     <!--[if IE 7>
     <link rel="stylesheet" href="assets/font-awesome-ie7.min.css />
     <![endif]-->
 
-    <!-- Compiled JavaScript --><% scripts.forEach( function ( file ) { %>
-    <script type="text/javascript" src="<%= file %>"></script><% }); %>
+    <!-- Compiled JavaScript -->{% scripts.forEach( function ( file ) { %}
+    <script type="text/javascript" src="{%= file %}"></script>{% }); %}
   </head>
   <body>
-    <%= yield %>
+    {%= yield %}
   </body>
 </html>
