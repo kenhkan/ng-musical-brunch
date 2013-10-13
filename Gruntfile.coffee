@@ -33,6 +33,7 @@ module.exports = (grunt) ->
   buildDir = 'build' # Where fully minified and concatenated output code lives
   configDir = 'config' # Where to put config files
   vendorDir = 'bower_components' # Where the vendor files are originally
+  tempDir= 'tmp' # Where the temporary build files live
 
   ################################
   ## DO NOT EDIT ANYTHING BELOW ##
@@ -68,6 +69,8 @@ module.exports = (grunt) ->
         coffee: ["#{sourceDir}/**/*.coffee", "!#{sourceDir}/**/*.spec.coffee"]
         coffeeTest: ["!#{sourceDir}/**/*.spec.coffee"]
         css: ["#{sourceDir}/**/*.{css,styl,less}"]
+        # Non-script/style assets
+        assets: ["#{sourceDir}/**/*.!{js,coffee,css,styl,less}"]
       compile:
         js: ["#{compileDir}/**/*.js", "!#{compileDir}/**/*.spec.js"]
         jsTest: ["!#{compileDir}/**/*.spec.js"]
@@ -100,17 +103,16 @@ module.exports = (grunt) ->
     clean:
       source: ["#{sourceDir}/vendor"]
       compile: ["#{compileDir}/vendor"]
-      full: [compileDir, buildDir, "#{sourceDir}/_layout.ejs"]
+      build: [buildDir, tempDir]
+      all: [compileDir, buildDir, "#{sourceDir}/_layout.ejs", tempDir]
 
     ## Build-related tasks
 
     # First prepare for minification
     ngmin:
-      compile:
+      build:
         files: [
-          src: '<%= files.compile.js %>'
-          cwd: compileDir
-          dest: compileDir
+          src: ['<%= files.compile.js %>']
           expand: true
         ]
 
@@ -126,13 +128,13 @@ module.exports = (grunt) ->
           '<%= files.compile.js %>'
           "#{configDir}/module_suffix.js"
         ]
-        dest: "#{buildDir}/<%= pkg.name %>-<%= pkg.version %>.js"
+        dest: "#{buildDir}/vendor/<%= pkg.name %>-<%= pkg.version %>.js"
 
       styles:
         src: [
           '<%= files.compile.css %>'
         ]
-        dest: "#{buildDir}/<%= pkg.name %>-<%= pkg.version %>.css"
+        dest: "#{buildDir}/vendor/<%= pkg.name %>-<%= pkg.version %>.css"
 
     # Finally uglify the JS release file
     uglify:
@@ -188,25 +190,41 @@ module.exports = (grunt) ->
 
     copy:
       # Copy over local vendor files
-      source:
+      vendorToSource:
         expand: true
         flatten: true
         cwd: vendorDir
         src: ['<%= files.vendor.scripts.local %>']
         dest: "#{sourceDir}/vendor/"
       # Same for compiling
-      compile:
+      vendorToCompile:
         expand: true
         flatten: true
         cwd: vendorDir
         src: ['<%= files.vendor.scripts.local %>']
         dest: "#{compileDir}/vendor/"
-      # Just copy over `index.html` from source when building
-      build:
+      # Copy over the assets from source to compile
+      assetsToCompile:
         expand: true
-        cwd: compileDir
-        src: 'index.html'
+        cwd: sourceDir
+        src: '<%= files.source.assets %>'
+        dest: compileDir
+      # Copy over the assets from source to build
+      assetsToBuild:
+        expand: true
+        cwd: sourceDir
+        src: '<%= files.source.assets %>'
         dest: buildDir
+      # Copy the built assets as vendor files to source
+      buildToSource:
+        expand: true
+        cwd: "#{buildDir}/vendor"
+        src: '*'
+        dest: "#{sourceDir}/vendor"
+      # Copy over from compile directory for building
+      buildIndex:
+        src: "#{tempDir}/index.html"
+        dest: "#{buildDir}/index.html"
 
     # Actually building `index.html`
     index:
@@ -230,6 +248,10 @@ module.exports = (grunt) ->
       # Compile code using Harp
       harpCompile:
         cmd: "node_modules/.bin/harp compile #{sourceDir} #{compileDir}"
+      # Compile into a temporary directory pre-build. We need this to recompile
+      # the `index.html` with references to the concatenated scripts
+      harpBuild:
+        cmd: "node_modules/.bin/harp compile #{sourceDir} #{tempDir}"
 
   # Get all scripts
   filterScripts = (files) ->
@@ -295,8 +317,40 @@ module.exports = (grunt) ->
   grunt.registerTask 'default', ['install', 'source', 'compile', 'build']
   grunt.registerTask 'install', ['exec:bower']
   grunt.registerTask 'watch', ['index:source', 'exec:harpServer']
-  grunt.registerTask 'source', ['clean:source', 'coffeelint', 'copy:source', 'index:source']
+
+  grunt.registerTask 'source', [
+    'clean:source' # Clean the source directory first
+    'coffeelint' # Then check CoffeeScripts are style-compliant
+    'copy:vendorToSource' # Copy over the vendor files
+    'index:source' # Build `index.html`
+  ]
+
   # TODO review and include karma
   #grunt.registerTask 'source', ['copy:source', 'coffeelint', 'index:source', 'karmaconfig', 'karma:continuous']
-  grunt.registerTask 'compile', ['clean:source', 'clean:compile', 'exec:harpCompile', 'jshint', 'copy:compile']
-  grunt.registerTask 'build', ['ngmin', 'concat', 'uglify', 'copy:build']
+  grunt.registerTask 'compile', [
+    'clean:compile' # Clean the compile directory
+    'clean:source' # Clean the source directory as well because we need to compile from source
+    'exec:harpCompile' # Because we're compiling from source
+    'jshint' # Check JS compliance
+    'copy:vendorToCompile' # Copy over vendor files
+    'copy:vendorToSource' # Copy over vendor files back to source because of `clean:source`
+    'copy:assetsToCompile' # As name
+  ]
+
+  grunt.registerTask 'build', [
+    # Clean up first
+    'clean:build'
+
+    # Then package the assets for deployment
+    'ngmin:build' # Apply minification protection
+    'concat' # Concatenate all files
+    'uglify' # Uglify the files for production
+    'copy:assetsToBuild' # As name
+
+    # We then need to compile the HTML with references to the packaged assets (only the script and the style)
+    'clean:source' # Clean the source directory because we need to compile from source
+    'copy:buildToSource' # Copy over the the built assets as vendor files to source
+    'index:source' # Build the `index.html`
+    'exec:harpBuild' # Compile the `index.html` to the temporary directory
+    'copy:buildIndex' # Transfer only the built `index.html` over to the build directory
+  ]

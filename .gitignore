@@ -3,4 +3,5 @@ bower_components
 vendor
 lib
 build
+tmp
 _layout.ejs
