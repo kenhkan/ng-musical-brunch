@@ -276,13 +276,11 @@ module.exports = (grunt) ->
     styles = filterStyles(@filesSrc).map (file) ->
       file.replace extractRE, '$1.css'
 
-    # Add vendor files to the *beginning* as external libraries take
-    # precedence. Remote libraries first, then local libraries
-    scripts.unshift local for local in vendorFiles.scripts.local
+    # Add remote vendor files to the *beginning* as external libraries take
+    # precedence
     scripts.unshift remote for remote in vendorFiles.scripts.remote
 
     # Do the same for styles
-    styles.unshift local for local in vendorFiles.styles.local
     styles.unshift remote for remote in vendorFiles.styles.remote
 
     # Use non-EJS syntax to insert `yield`
