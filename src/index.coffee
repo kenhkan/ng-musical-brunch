@@ -3,6 +3,7 @@ do ->
   module = angular.module 'boilerplate', [
     'ui.state'
     'ui.route'
+    'titleService'
   ]
 
   # Routing
@@ -15,4 +16,4 @@ do ->
 
   # Root controller
   module.controller 'AppController', ($scope, $location) ->
-    $scope.message = 'Hello Harp!'
+    $scope.message = 'Hello!'
