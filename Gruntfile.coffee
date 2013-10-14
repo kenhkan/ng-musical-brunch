@@ -298,7 +298,7 @@ module.exports = (grunt) ->
     grunt.template.addDelimiters 'percentage', '{%', '%}'
 
     # Copy over the entry point and compile references to the scripts and styles
-    grunt.file.copy 'etc/index.html', "#{@data.dir}/_layout.ejs",
+    grunt.file.copy 'etc/index.tpl.html', "#{@data.dir}/_layout.ejs",
       process: (contents, path) ->
         grunt.template.process contents,
           delimiters: 'percentage'
@@ -327,7 +327,7 @@ module.exports = (grunt) ->
   # Usually you just want to run `grunt` to get the deployed code
   grunt.registerTask 'default', ['install', 'source', 'compile', 'build']
   # Or run the server (remember to run watch with it)
-  grunt.registerTask 'server', ['exec:harpServer']
+  grunt.registerTask 'server', ['install', 'exec:harpServer']
   # Or just install dependencies
   grunt.registerTask 'install', ['exec:bower']
 
