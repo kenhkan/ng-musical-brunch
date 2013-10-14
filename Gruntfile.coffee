@@ -70,7 +70,7 @@ module.exports = (grunt) ->
         coffeeTest: ["!#{sourceDir}/**/*.spec.coffee"]
         css: ["#{sourceDir}/**/*.{css,styl,less}"]
         # Non-script/style assets
-        assets: ["**/*.!(js|coffee|css|styl|less|jade|ejs)"]
+        assets: ["**/*.!(js|css|spec)"]
       compile:
         js: ["#{compileDir}/**/*.js", "!#{compileDir}/**/*.spec.js"]
         jsTest: ["!#{compileDir}/**/*.spec.js"]
@@ -213,10 +213,10 @@ module.exports = (grunt) ->
         cwd: vendorDir
         src: ['<%= files.vendor.scripts.local %>']
         dest: "#{compileDir}/vendor/"
-      # Copy over the assets from source to build
+      # Copy over the assets from compile to build
       assetsToBuild:
         expand: true
-        cwd: sourceDir
+        cwd: compileDir
         src: '<%= files.source.assets %>'
         dest: buildDir
       # Copy the built assets as vendor files to source

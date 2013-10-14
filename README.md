@@ -95,18 +95,15 @@ Remember to edit `etc/index.tpl.html` to set the `ng-app` and top-level
 
 ### Layout
 
-Harp provides a powerful layout mechanism. However, in Angular.js, routing is
-handled internally by the `$location` subsystem. So we only need one HTML
-file--the `index.html`. Simply define a `index.html`, `index.jade`, or
-`index.ejs` and use Harp's partials to include other parts of your app.
-
-Also, do *not* use Harp's own `_layout` as it is automatically generated with
+Harp provides a powerful layout mechanism with `_layout`. However, do *not* use
+Harp's layout mechanism as `_layout` is automatically generated with the
 correct references to your scripts and styles.
 
 ### App file structure
 
-There is no convention here. Any file recognized by Harp is compiled. Anything
-else is treated as assets and are transferred as-is for your deployment.
+There is no convention here. Scripts and styles recognized by Harp are
+compiled. Anything else (including markups) is treated as assets and are
+transferred as-is for your deployment.
 
 The directory `vendor/` is reserved for third-party code that is managed by
 Bower. Your app directory could look something like:
@@ -114,8 +111,11 @@ Bower. Your app directory could look something like:
     src/vendor -> Reserved for third-party code
     src/_layout.ejs -> Automatically managed
     src/index.jade -> Entry point
-    src/_partials/login.jade -> Include this in `index.jade` and do not serve
-    src/images/logo.png -> This is automatically copied on compilation
+    src/partials/login.jade -> A partial included either by Harp partial
+      mechanism or by Angular.js' ui-route. It is copied on compilation if not
+      hidden.
+    src/images/logo.png -> This is automatically copied on compilation if not
+      hidden.
     ...
 
 ### HTML5 Mode
