@@ -1,4 +1,5 @@
-# Harp Boilerplate for Angular.js
+# Harp Boilerplate for Angular.js <br/>[![Dependency Status](https://david-dm.org/kenhkan/hb-angular.png)](https://david-dm.org/kenhkan/hb-angular) [![Stories in Ready](https://badge.waffle.io/kenhkan/hb-angular.png)](http://waffle.io/kenhkan/hb-angular)
+
 
 Merging best practices in Angular.js and Harp for a build process that anyone
 can understand. This boilerplate is created out of frustration in making
@@ -12,7 +13,7 @@ Angular.js development a joy with Harp.
 ## Installation
 
 1. `npm install -g grunt`
-2. `git clone`
+2. `git clone https://github.com/kenhkan/hb-angular.git`
 3. `npm install`
 
 
