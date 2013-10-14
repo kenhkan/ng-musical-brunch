@@ -9,10 +9,10 @@ module.exports = (grunt) ->
     scripts:
       # Local files: relative to where Bower components are installed
       local: [
-        'angular-bootstrap/ui-bootstrap.min.js'
+        'angular-bootstrap/ui-bootstrap.js'
         'angular-mocks/angular-mocks.js'
-        'angular-ui-router/release/angular-ui-router.min.js'
-        'angular-ui-utils/modules/route/route.min.js'
+        'angular-ui-router/release/angular-ui-router.js'
+        'angular-ui-utils/modules/route/route.js'
       ]
       # Remote files: absolute HTTP(S) URLs
       remote: [
@@ -27,6 +27,10 @@ module.exports = (grunt) ->
         "https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css"
       ]
 
+  ################################
+  ## DO NOT EDIT ANYTHING BELOW ##
+  ################################
+
   # Paths
   sourceDir = 'src' # Where the source lives
   compileDir = 'lib' # Where pre-processed and minified (except JS) code lives
@@ -34,10 +38,6 @@ module.exports = (grunt) ->
   configDir = 'config' # Where to put config files
   vendorDir = 'bower_components' # Where the vendor files are originally
   tempDir= 'tmp' # Where the temporary build files live
-
-  ################################
-  ## DO NOT EDIT ANYTHING BELOW ##
-  ################################
 
   # Load Grunt tasks
   grunt.loadNpmTasks 'grunt-contrib-jshint'
@@ -105,6 +105,16 @@ module.exports = (grunt) ->
       compile: ["#{compileDir}/vendor"]
       build: [buildDir, tempDir]
       all: [compileDir, buildDir, "#{sourceDir}/_layout.ejs", tempDir]
+
+    ## Watch for development
+
+    watch:
+      options:
+        atBegin: true
+        livereload: true
+      source:
+        files: ["Gruntfile.coffee", "#{sourceDir}/**/*", "!#{sourceDir}/_layout.ejs", "!#{sourceDir}/vendor/**/*"]
+        tasks: ['source']
 
     ## Build-related tasks
 
@@ -259,7 +269,7 @@ module.exports = (grunt) ->
 
   # Build `index.html` by injecting all detected Java-/CoffeeScript and
   # CSS/Stylus/LESS files in target directory
-  grunt.registerMultiTask 'index', 'Building `index.html`', ->
+  grunt.registerMultiTask 'index', 'Building `index.html`', (match) ->
     # Extract the middle part (without the base (source, compile, or build)
     # directory and the extension
     extractRE = new RegExp '^[^/]+/(.+)\\..+$'
@@ -270,12 +280,19 @@ module.exports = (grunt) ->
     styles = filterStyles(@filesSrc).map (file) ->
       file.replace extractRE, '$1.css'
 
+    # Filter out for only vendor script/style
+    if match
+      scripts = scripts.filter (script) ->
+        script.match match
+      styles = styles.filter (style) ->
+        style.match match
+
     # Add remote vendor files to the *beginning* as external libraries take
     # precedence
-    scripts.unshift remote for remote in vendorFiles.scripts.remote
+    scripts.unshift remote for remote in vendorFiles.scripts.remote.reverse()
 
     # Do the same for styles
-    styles.unshift remote for remote in vendorFiles.styles.remote
+    styles.unshift remote for remote in vendorFiles.styles.remote.reverse()
 
     # Use non-EJS syntax to insert `yield`
     grunt.template.addDelimiters 'percentage', '{%', '%}'
@@ -309,10 +326,13 @@ module.exports = (grunt) ->
 
   # Usually you just want to run `grunt` to get the deployed code
   grunt.registerTask 'default', ['install', 'source', 'compile', 'build']
-  # Or spin up a Harp server for development by running `grunt watch`
-  grunt.registerTask 'watch', ['index:source', 'exec:harpServer']
+  # Or run the server (remember to run watch with it)
+  grunt.registerTask 'server', ['exec:harpServer']
   # Or just install dependencies
   grunt.registerTask 'install', ['exec:bower']
+
+  # TODO include karma in development in `watch`
+  #grunt.registerTask 'source', ['karmaconfig', 'karma:continuous']
 
   # Make sure our HTML is referencing all our scripts and styles
   grunt.registerTask 'source', [
@@ -321,9 +341,6 @@ module.exports = (grunt) ->
     'copy:vendorToSource' # Copy over the vendor files
     'index:source' # Build `index.html`
   ]
-
-  # TODO include karma in development
-  #grunt.registerTask 'source', ['karmaconfig', 'karma:continuous']
 
   # Compile for delivery (but not minified)
   grunt.registerTask 'compile', [
@@ -344,12 +361,12 @@ module.exports = (grunt) ->
     'ngmin:build' # Apply minification protection
     'concat' # Concatenate all files
     'uglify' # Uglify the files for production
-    'copy:assetsToBuild' # Copy assets to the build directory
 
     # We then need to compile the HTML with references to the packaged assets (only the script and the style)
     'clean:source' # Clean the source directory because we need to compile from source
     'copy:buildToSource' # Copy over the the built assets as vendor files to source
-    'index:source' # Build the `index.html`
+    'index:source:^vendor' # Build the `index.html`
     'exec:harpBuild' # Compile the `index.html` to the temporary directory
     'copy:buildIndex' # Transfer only the built `index.html` over to the build directory
+    'copy:assetsToBuild' # Copy assets to the build directory
   ]
