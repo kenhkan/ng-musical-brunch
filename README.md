@@ -1,13 +1,18 @@
 # Harp Boilerplate for Angular.js <br/>[![Dependency Status](https://david-dm.org/kenhkan/hb-angular.png)](https://david-dm.org/kenhkan/hb-angular) [![Stories in Ready](https://badge.waffle.io/kenhkan/hb-angular.png)](http://waffle.io/kenhkan/hb-angular)
 
-
 Merging best practices in Angular.js and Harp for a build process that anyone
 can understand. This boilerplate is created out of frustration in making
-[ngBoilerplate](https://github.com/ngbp/ng-boilerplate) work. ngBoilerplate is
-a great starting point for Angular.js projects and this boilerplate takes many
-ideas from ngBoilerplate too. With Harp added to the pot though, there is no
-configuration to make sure everything works! This boilerplate is to make
-Angular.js development a joy with Harp.
+[ngBoilerplate](https://github.com/ngbp/ng-boilerplate) work with file types
+that it does not support.
+
+ngBoilerplate is a great starting point for Angular.js projects and this
+boilerplate takes many ideas from ngBoilerplate too. With Harp added to the pot
+though, there is no configuration to make sure everything works!
+
+It also has an extremely bare file structure convention. You only need to stay
+away the `vendor` directory of the `_entry.ejs` index template file. Everything
+else works as expected! Or your money back! (Just in case: you are not paying
+me anything, but do send in pull requests or issues if it doesn't work for you.)
 
 
 ## Installation
