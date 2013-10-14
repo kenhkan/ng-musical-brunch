@@ -84,7 +84,7 @@ module.exports = (grunt) ->
     changelog:
       options:
         dest: 'CHANGELOG.md'
-        template: 'changelog.tpl'
+        template: 'etc/changelog.tpl'
 
     # Bump version to both Bower and NPM
     bump:
@@ -281,7 +281,7 @@ module.exports = (grunt) ->
     grunt.template.addDelimiters 'percentage', '{%', '%}'
 
     # Copy over the entry point and compile references to the scripts and styles
-    grunt.file.copy 'index.html', "#{@data.dir}/_layout.ejs",
+    grunt.file.copy 'etc/index.html', "#{@data.dir}/_layout.ejs",
       process: (contents, path) ->
         grunt.template.process contents,
           delimiters: 'percentage'
