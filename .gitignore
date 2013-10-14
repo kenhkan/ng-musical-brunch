@@ -4,4 +4,4 @@ vendor
 lib
 build
 tmp
-_layout.ejs
+/src/_entry.ejs

@@ -105,11 +105,15 @@ There is no convention here. Scripts and styles recognized by Harp are
 compiled. Anything else (including markups) is treated as assets and are
 transferred as-is for your deployment.
 
+The file `_entry.ejs` is automatically managed to include references to
+compiled scripts and styles. Do *not* save a user markup file to that filename.
+This is a layout file that is automatically applied on the `index.html` file.
+
 The directory `vendor/` is reserved for third-party code that is managed by
 Bower. Your app directory could look something like:
 
     src/vendor -> Reserved for third-party code
-    src/_layout.ejs -> Automatically managed
+    src/_entry.ejs -> Automatically managed
     src/index.jade -> Entry point
     src/partials/login.jade -> A partial included either by Harp partial
       mechanism or by Angular.js' ui-route. It is copied on compilation if not

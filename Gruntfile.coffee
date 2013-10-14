@@ -37,7 +37,8 @@ module.exports = (grunt) ->
   buildDir = 'build' # Where fully minified and concatenated output code lives
   configDir = 'config' # Where to put config files
   vendorDir = 'bower_components' # Where the vendor files are originally
-  tempDir= 'tmp' # Where the temporary build files live
+  tempDir = 'tmp' # Where the temporary build files live
+  entryFilename = 'entry' # The entry partial to include
 
   # Load Grunt tasks
   grunt.loadNpmTasks 'grunt-contrib-jshint'
@@ -104,7 +105,7 @@ module.exports = (grunt) ->
       source: ["#{sourceDir}/vendor"]
       compile: ["#{compileDir}/vendor"]
       build: [buildDir, tempDir]
-      all: [compileDir, buildDir, "#{sourceDir}/_layout.ejs", tempDir]
+      all: [compileDir, buildDir, tempDir, "#{sourceDir}/_#{entryFilename}.ejs"]
 
     ## Watch for development
 
@@ -113,7 +114,7 @@ module.exports = (grunt) ->
         atBegin: true
         livereload: true
       source:
-        files: ["Gruntfile.coffee", "#{sourceDir}/**/*", "!#{sourceDir}/_layout.ejs", "!#{sourceDir}/vendor/**/*"]
+        files: ["Gruntfile.coffee", "#{sourceDir}/**/*", "!#{sourceDir}/_#{entryFilename}.ejs", "!#{sourceDir}/vendor/**/*"]
         tasks: ['source']
 
     ## Build-related tasks
@@ -298,7 +299,7 @@ module.exports = (grunt) ->
     grunt.template.addDelimiters 'percentage', '{%', '%}'
 
     # Copy over the entry point and compile references to the scripts and styles
-    grunt.file.copy 'etc/index.tpl.html', "#{@data.dir}/_layout.ejs",
+    grunt.file.copy 'etc/index.tpl.html', "#{@data.dir}/_#{entryFilename}.ejs",
       process: (contents, path) ->
         grunt.template.process contents,
           delimiters: 'percentage'
