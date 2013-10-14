@@ -1,4 +1,3 @@
-
 # <%= version%> (<%= today%>) 
 
 <% if (_(changelog.feat).size() > 0) { %> ## Features

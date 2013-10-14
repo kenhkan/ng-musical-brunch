@@ -138,13 +138,13 @@ module.exports = (grunt) ->
           '<%= files.compile.js %>'
           "#{configDir}/module_suffix.js"
         ]
-        dest: "#{buildDir}/vendor/<%= pkg.name %>-<%= pkg.version %>.js"
+        dest: "#{buildDir}/vendor/<%= pkg.name %>-<%= pkg.version %>.min.js"
 
       styles:
         src: [
           '<%= files.compile.css %>'
         ]
-        dest: "#{buildDir}/vendor/<%= pkg.name %>-<%= pkg.version %>.css"
+        dest: "#{buildDir}/vendor/<%= pkg.name %>-<%= pkg.version %>.min.css"
 
     # Finally uglify the JS release file
     uglify:
