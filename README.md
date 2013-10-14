@@ -117,3 +117,10 @@ Bower. Your app directory could look something like:
     src/_partials/login.jade -> Include this in `index.jade` and do not serve
     src/images/logo.png -> This is automatically copied on compilation
     ...
+
+### HTML5 Mode
+
+There is notably no 404 or 500 pages. You should set your server to return the
+`index.html` for all requests to the server. This is a requirement to leverage
+Angular.js' [HTML
+mode](http://docs.angularjs.org/guide/dev_guide.services.$location)
