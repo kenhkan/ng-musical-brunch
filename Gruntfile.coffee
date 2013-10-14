@@ -70,7 +70,7 @@ module.exports = (grunt) ->
         coffeeTest: ["!#{sourceDir}/**/*.spec.coffee"]
         css: ["#{sourceDir}/**/*.{css,styl,less}"]
         # Non-script/style assets
-        assets: ["#{sourceDir}/**/*.!{js,coffee,css,styl,less}"]
+        assets: ["**/*.!(js|coffee|css|styl|less|jade|ejs)"]
       compile:
         js: ["#{compileDir}/**/*.js", "!#{compileDir}/**/*.spec.js"]
         jsTest: ["!#{compileDir}/**/*.spec.js"]
@@ -203,12 +203,6 @@ module.exports = (grunt) ->
         cwd: vendorDir
         src: ['<%= files.vendor.scripts.local %>']
         dest: "#{compileDir}/vendor/"
-      # Copy over the assets from source to compile
-      assetsToCompile:
-        expand: true
-        cwd: sourceDir
-        src: '<%= files.source.assets %>'
-        dest: compileDir
       # Copy over the assets from source to build
       assetsToBuild:
         expand: true
@@ -339,7 +333,6 @@ module.exports = (grunt) ->
     'jshint' # Check JS compliance
     'copy:vendorToCompile' # Copy over vendor files
     'copy:vendorToSource' # Copy over vendor files back to source because of `clean:source`
-    'copy:assetsToCompile' # As name
   ]
 
   # The ultimate deployment package
@@ -351,7 +344,7 @@ module.exports = (grunt) ->
     'ngmin:build' # Apply minification protection
     'concat' # Concatenate all files
     'uglify' # Uglify the files for production
-    'copy:assetsToBuild' # As name
+    'copy:assetsToBuild' # Copy assets to the build directory
 
     # We then need to compile the HTML with references to the packaged assets (only the script and the style)
     'clean:source' # Clean the source directory because we need to compile from source
