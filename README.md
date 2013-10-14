@@ -19,9 +19,16 @@ Angular.js development a joy with Harp.
 
 ## Usage
 
+Rule of thumb:
+
+1. Run `grunt watch`
+2. Run `grunt server`
+3. Open `localhost:9000` in your browser
+
 ### `grunt`
 
-Compile and build the project
+Compile and build the project. Output code is put in `build/`. See [file
+structure](#file-structure) for more information.
 
 ### `grunt watch`
 
