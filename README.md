@@ -58,7 +58,7 @@ This resets the project to its pristine state.
 After having set up the project, the file structure would look like:
 
     etc/changelog.tpl -> The template for building CHANGELOG.md
-    etc/index.tpl.html -> The template for building index.html
+    etc/404.tpl.html -> The template for building 404.html
     etc/module_prefix.js -> The enclosing code for compiled and minified code
     etc/module_suffix.js -> The ending counterpart of `module_prefix.js`
     src/ -> Anything specific to the app goes here
@@ -95,7 +95,7 @@ URLs to `vendorFiles.scripts.remote` and `vendorFiles.styles.remote`.
 
 ### App settings
 
-Remember to edit `etc/index.tpl.html` to set the `ng-app` and top-level
+Remember to edit `etc/404.tpl.html` to set the `ng-app` and top-level
 `ng-controller` for your app!
 
 ### Layout
@@ -112,14 +112,14 @@ transferred as-is for your deployment.
 
 The file `_entry.ejs` is automatically managed to include references to
 compiled scripts and styles. Do *not* save a user markup file to that filename.
-This is a layout file that is automatically applied on the `index.html` file.
+This is a layout file that is automatically applied on the `404.html` file.
 
 The directory `vendor/` is reserved for third-party code that is managed by
 Bower. Your app directory could look something like:
 
     src/vendor -> Reserved for third-party code
     src/_entry.ejs -> Automatically managed
-    src/index.jade -> Entry point
+    src/404.jade -> Entry point
     src/partials/login.jade -> A partial included either by Harp partial
       mechanism or by Angular.js' ui-route. It is copied on compilation if not
       hidden.
@@ -129,7 +129,9 @@ Bower. Your app directory could look something like:
 
 ### HTML5 Mode
 
-There is notably no 404 or 500 pages. You should set your server to return the
-`index.html` for all requests to the server. This is a requirement to leverage
-Angular.js' [HTML
+There is notably no index page but a 404 page. Modern webservers should always
+return `/404.html` without showing it as such (i.e. no redirection). This plays
+nicely with Angular.js' HTML5 which requires all requests to non-existing path
+to return the application page. Do not name any file `index` to avoid the
+webserver serving sub-views. See Angular.js' [HTML
 mode](http://docs.angularjs.org/guide/dev_guide.services.$location)

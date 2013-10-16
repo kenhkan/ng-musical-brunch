@@ -7,8 +7,12 @@ do ->
   ]
 
   # Routing
-  module.config ($stateProvider, $urlRouterProvider) ->
-    $urlRouterProvider.otherwise '/home'
+  module.config ($locationProvider, $stateProvider, $urlRouterProvider) ->
+    # Use HTML5 mode
+    $locationProvider.html5Mode true
+
+    # Redirection rules
+    $urlRouterProvider.otherwise '/'
 
   # Entry point
   module.run (titleService) ->

@@ -199,7 +199,7 @@ module.exports = (grunt) ->
         dir: '<%= build_dir %>'
         src: ['<%= vendor_files.js %>', '<%= html2js.app.dest %>', '<%= html2js.common.dest %>', '<%= html2js.jade_app.dest %>', '<%= html2js.jade_common.dest %>', 'vendor/angular-mocks/angular-mocks.js']
 
-    ## Build `index.html` to include references to all JS and CSS files
+    ## Build `404.html` to include references to all JS and CSS files
 
     copy:
       # Copy over local vendor files
@@ -229,12 +229,12 @@ module.exports = (grunt) ->
         src: '*'
         dest: "#{sourceDir}/vendor"
       # Copy over from compile directory for building
-      buildIndex:
-        src: "#{tempDir}/index.html"
-        dest: "#{buildDir}/index.html"
+      buildEntry:
+        src: "#{tempDir}/404.html"
+        dest: "#{buildDir}/404.html"
 
-    # Actually building `index.html`
-    index:
+    # Actually building `404.html`
+    entry:
       source:
         dir: sourceDir
         src: [
@@ -256,7 +256,7 @@ module.exports = (grunt) ->
       harpCompile:
         cmd: "node_modules/.bin/harp compile #{sourceDir} #{compileDir}"
       # Compile into a temporary directory pre-build. We need this to recompile
-      # the `index.html` with references to the concatenated scripts
+      # the `404.html` with references to the concatenated scripts
       harpBuild:
         cmd: "node_modules/.bin/harp compile #{sourceDir} #{tempDir}"
 
@@ -270,9 +270,9 @@ module.exports = (grunt) ->
     files.filter (file) ->
       file.match /\.(css|styl|less)$/
 
-  # Build `index.html` by injecting all detected Java-/CoffeeScript and
+  # Build `404.html` by injecting all detected Java-/CoffeeScript and
   # CSS/Stylus/LESS files in target directory
-  grunt.registerMultiTask 'index', 'Building `index.html`', (match) ->
+  grunt.registerMultiTask 'entry', 'Building `404.html`', (match) ->
     # Extract the middle part (without the base (source, compile, or build)
     # directory and the extension
     extractRE = new RegExp '^[^/]+/(.+)\\..+$'
@@ -283,9 +283,9 @@ module.exports = (grunt) ->
     styles = filterStyles(@filesSrc).map (file) ->
       file.replace extractRE, '$1.css'
 
-    # Always put `index` first
-    _.remove scripts, (script) -> script is 'index.js'
-    scripts.unshift 'index.js'
+    # Always put `404` first
+    _.remove scripts, (script) -> script is '404.js'
+    scripts.unshift '404.js'
 
     # Filter out for only vendor script/style
     if match
@@ -305,7 +305,7 @@ module.exports = (grunt) ->
     grunt.template.addDelimiters 'percentage', '{%', '%}'
 
     # Copy over the entry point and compile references to the scripts and styles
-    grunt.file.copy 'etc/index.tpl.html', "#{@data.dir}/_#{entryFilename}.ejs",
+    grunt.file.copy 'etc/404.tpl.html', "#{@data.dir}/_#{entryFilename}.ejs",
       process: (contents, path) ->
         grunt.template.process contents,
           delimiters: 'percentage'
@@ -346,7 +346,7 @@ module.exports = (grunt) ->
     'clean:source' # Clean the source directory first
     'coffeelint' # Then check CoffeeScripts are style-compliant
     'copy:vendorToSource' # Copy over the vendor files
-    'index:source' # Build `index.html`
+    'entry:source' # Build `404.html`
   ]
 
   # Compile for delivery (but not minified)
@@ -372,8 +372,8 @@ module.exports = (grunt) ->
     # We then need to compile the HTML with references to the packaged assets (only the script and the style)
     'clean:source' # Clean the source directory because we need to compile from source
     'copy:buildToSource' # Copy over the the built assets as vendor files to source
-    'index:source:^vendor' # Build the `index.html`
-    'exec:harpBuild' # Compile the `index.html` to the temporary directory
-    'copy:buildIndex' # Transfer only the built `index.html` over to the build directory
+    'entry:source:^vendor' # Build the `404.html`
+    'exec:harpBuild' # Compile the `404.html` to the temporary directory
+    'copy:buildEntry' # Transfer only the built `404.html` over to the build directory
     'copy:assetsToBuild' # Copy assets to the build directory
   ]
