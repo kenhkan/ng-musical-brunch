@@ -1,3 +1,5 @@
+_ = require 'lodash'
+
 module.exports = (grunt) ->
   ################################
   ## USER SETTINGS - EDIT BELOW ##
@@ -280,6 +282,10 @@ module.exports = (grunt) ->
       file.replace extractRE, '$1.js'
     styles = filterStyles(@filesSrc).map (file) ->
       file.replace extractRE, '$1.css'
+
+    # Always put `index` first
+    _.remove scripts, (script) -> script is 'index.js'
+    scripts.unshift 'index.js'
 
     # Filter out for only vendor script/style
     if match
