@@ -40,7 +40,7 @@ module.exports = (grunt) ->
   configDir = 'config' # Where to put config files
   vendorDir = 'bower_components' # Where the vendor files are originally
   tempDir = 'tmp' # Where the temporary build files live
-  entryFilename = 'entry' # The entry partial to include
+  entryFilename = 'main' # The entry partial to include
 
   # Load Grunt tasks
   grunt.loadNpmTasks 'grunt-contrib-jshint'
@@ -283,9 +283,9 @@ module.exports = (grunt) ->
     styles = filterStyles(@filesSrc).map (file) ->
       file.replace extractRE, '$1.css'
 
-    # Always put `404` first
-    _.remove scripts, (script) -> script is '404.js'
-    scripts.unshift '404.js'
+    # Always put `main` script first
+    _.remove scripts, (script) -> script is 'main.js'
+    scripts.unshift 'main.js'
 
     # Filter out for only vendor script/style
     if match

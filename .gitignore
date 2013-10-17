@@ -1,7 +1,7 @@
-node_modules
-bower_components
-vendor
-lib
-build
-tmp
-/src/_entry.ejs
+/node_modules
+/bower_components
+/lib
+/build
+/tmp
+/public/_main.ejs
+/public/vendor

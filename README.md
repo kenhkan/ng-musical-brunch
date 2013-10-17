@@ -26,8 +26,8 @@ me anything, but do send in pull requests or issues if it doesn't work for you.)
 
 Rule of thumb:
 
-1. Run `grunt watch`
-2. Run `grunt server`
+1. Run `grunt watch` to rebuild the references on file change
+2. Run `grunt server` to run the Harp server
 3. Open `localhost:9000` in your browser
 
 ### `grunt`
@@ -106,11 +106,11 @@ correct references to your scripts and styles.
 
 ### App file structure
 
-There is no convention here. Scripts and styles recognized by Harp are
-compiled. Anything else (including markups) is treated as assets and are
-transferred as-is for your deployment.
+There is no convention here. Scripts and styles recognized by Harp are compiled
+and automatically included when `grunt watch` is run. Anything else (including
+markups) is treated as assets and are transferred as-is for your deployment.
 
-The file `_entry.ejs` is automatically managed to include references to
+The file `_main.ejs` is automatically managed to include references to
 compiled scripts and styles. Do *not* save a user markup file to that filename.
 This is a layout file that is automatically applied on the `404.html` file.
 
@@ -118,7 +118,7 @@ The directory `vendor/` is reserved for third-party code that is managed by
 Bower. Your app directory could look something like:
 
     src/vendor -> Reserved for third-party code
-    src/_entry.ejs -> Automatically managed
+    src/_main.ejs -> Automatically managed
     src/404.jade -> Entry point
     src/partials/login.jade -> A partial included either by Harp partial
       mechanism or by Angular.js' ui-route. It is copied on compilation if not
@@ -126,6 +126,12 @@ Bower. Your app directory could look something like:
     src/images/logo.png -> This is automatically copied on compilation if not
       hidden.
     ...
+
+### `main`
+
+The file `main.js` is always included in the `<HEAD>` first. You should always
+initialize your module there. `app.js` is by convention there to house the
+controller code for `AppController`, which is declared at `<HTML>`.
 
 ### HTML5 Mode
 

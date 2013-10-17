@@ -17,7 +17,3 @@ do ->
   # Entry point
   module.run (titleService) ->
     titleService.setSuffix ' | Boilerplate'
-
-  # Root controller
-  module.controller 'AppController', ($scope, $location) ->
-    $scope.message = 'Hello!'
