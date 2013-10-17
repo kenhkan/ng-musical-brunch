@@ -3,16 +3,18 @@
 Merging best practices in Angular.js and Harp for a build process that anyone
 can understand. This boilerplate is created out of frustration in making
 [ngBoilerplate](https://github.com/ngbp/ng-boilerplate) work with file types
-that it does not support.
+that it does not support. The added bonus is of course it works with the
+beautiful [Harp Platform](https://harp.io).
 
 ngBoilerplate is a great starting point for Angular.js projects and this
-boilerplate takes many ideas from ngBoilerplate too. With Harp added to the pot
-though, there is no configuration to make sure everything works!
+boilerplate borrows many ideas from ngBoilerplate too. With Harp added to the
+pot though, there is no configuration to make everything works like music!
 
 It also has an extremely bare file structure convention. You only need to stay
-away the `vendor` directory of the `_entry.ejs` index template file. Everything
-else works as expected! Or your money back! (Just in case: you are not paying
-me anything, but do send in pull requests or issues if it doesn't work for you.)
+away from the `vendor` directory and the `_main.ejs` index template file.
+Everything else works as expected! Or your money back! (Just in case: you are
+not paying me anything, but do send in pull requests or issues if it doesn't
+work for you. :)
 
 
 ## Installation
@@ -24,24 +26,26 @@ me anything, but do send in pull requests or issues if it doesn't work for you.)
 
 ## Usage
 
-Rule of thumb:
+Easy as 1-2-3:
 
 1. Run `grunt watch` to rebuild the references on file change
 2. Run `grunt server` to run the Harp server
-3. Open `localhost:9000` in your browser
+3. Open `localhost:9000` in your browser to view your app!
 
 ### `grunt`
 
-Compile and build the project. Output code is put in `build/`. See [file
+Compile and build the project. Output code is put in `public/`. See [file
 structure](#file-structure) for more information.
 
 ### `grunt watch`
 
-Watch for file changes and automatically recompile
+Watch for file changes and automatically rebuild the scripts and styles
+references
 
 ### `grunt server`
 
-Run the Harp server for development
+Run the Harp server for development (well, and
+[staging](https://harp.io/docs/platform/collaborators) too).
 
 ### `grunt clean`
 
@@ -58,10 +62,10 @@ This resets the project to its pristine state.
 After having set up the project, the file structure would look like:
 
     etc/changelog.tpl -> The template for building CHANGELOG.md
-    etc/404.tpl.html -> The template for building 404.html
+    etc/404.tpl.html -> The template for building the main entry point
     etc/module_prefix.js -> The enclosing code for compiled and minified code
     etc/module_suffix.js -> The ending counterpart of `module_prefix.js`
-    src/ -> Anything specific to the app goes here
+    app/ -> Anything specific to the app goes here
     bower.json -> Bower dependency declaration
     Gruntfile.coffee -> Gruntfile configuration
     package.json -> NPM dependency declaration
@@ -70,8 +74,8 @@ After having set up the project, the file structure would look like:
 After having run `grunt`, additional directories are added:
 
     bower_compoennts/ -> Downloaded Bower components
-    build/ -> Production-ready code (compiled, minified, uglified, and concatenated)
-    lib/ -> Deployment-ready code (compiled)
+    public/ -> Production-ready code (compiled, minified, uglified, and concatenated)
+    build/ -> Deployment-ready code (compiled)
     node_modules/ -> Downloaded NPM modules
     tmp/ -> Temporary directory for building. Ignore
 
@@ -81,7 +85,8 @@ After having run `grunt`, additional directories are added:
 ### Package management
 
 Because developing in Angular.js requires many external libraries, package
-management should be automated using [Bower](http://bower.io/). Follow these steps:
+management should be automated using [Bower](http://bower.io/). Follow these
+steps:
 
 1. Find a package you want
 2. Add to `bower.json`
@@ -98,17 +103,11 @@ URLs to `vendorFiles.scripts.remote` and `vendorFiles.styles.remote`.
 Remember to edit `etc/404.tpl.html` to set the `ng-app` and top-level
 `ng-controller` for your app!
 
-### Layout
-
-Harp provides a powerful layout mechanism with `_layout`. However, do *not* use
-Harp's layout mechanism as `_layout` is automatically generated with the
-correct references to your scripts and styles.
-
 ### App file structure
 
-There is no convention here. Scripts and styles recognized by Harp are compiled
-and automatically included when `grunt watch` is run. Anything else (including
-markups) is treated as assets and are transferred as-is for your deployment.
+There is no convention here. Scripts, styles, and markups recognized by Harp
+are compiled and automatically included when `grunt watch` is running. Anything
+else is treated as assets and are transferred as-is for your deployment.
 
 The file `_main.ejs` is automatically managed to include references to
 compiled scripts and styles. Do *not* save a user markup file to that filename.
@@ -140,4 +139,4 @@ return `/404.html` without showing it as such (i.e. no redirection). This plays
 nicely with Angular.js' HTML5 which requires all requests to non-existing path
 to return the application page. Do not name any file `index` to avoid the
 webserver serving sub-views. See Angular.js' [HTML
-mode](http://docs.angularjs.org/guide/dev_guide.services.$location)
+mode](http://docs.angularjs.org/guide/dev_guide.services.$location).
