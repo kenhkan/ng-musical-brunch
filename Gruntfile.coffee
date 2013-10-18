@@ -34,9 +34,9 @@ module.exports = (grunt) ->
   ################################
 
   # Paths
-  sourceDir = 'public' # Where the source lives
-  compileDir = 'lib' # Where pre-processed and minified (except JS) code lives
-  buildDir = 'build' # Where fully minified and concatenated output code lives
+  sourceDir = 'app' # Where the source lives
+  compileDir = 'build' # Where pre-processed and minified (except JS) code lives
+  buildDir = 'public' # Where fully minified and concatenated output code lives
   configDir = 'config' # Where to put config files
   vendorDir = 'bower_components' # Where the vendor files are originally
   tempDir = 'tmp' # Where the temporary build files live
@@ -284,8 +284,8 @@ module.exports = (grunt) ->
       file.replace extractRE, '$1.css'
 
     # Always put `main` script first
-    _.remove scripts, (script) -> script is 'main.js'
-    scripts.unshift 'main.js'
+    _.remove scripts, (script) -> script is "#{entryFilename}.js"
+    scripts.unshift "#{entryFilename}.js"
 
     # Filter out for only vendor script/style
     if match

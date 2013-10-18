@@ -1,7 +1,8 @@
 /node_modules
 /bower_components
-/lib
+/app
 /build
+/public
 /tmp
-/public/_main.ejs
-/public/vendor
+/app/_main.ejs
+/app/vendor
