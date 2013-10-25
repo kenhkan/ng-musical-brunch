@@ -21,6 +21,10 @@ module.exports = (grunt) ->
         'https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js'
         'https://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js'
         'https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js'
+        # Recommended libraries
+        #'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.2.1/lodash.min.js'
+        #'https://cdnjs.cloudflare.com/ajax/libs/restangular/0.5.1/dependencies/angular-resource.min.js'
+        #'https://cdnjs.cloudflare.com/ajax/libs/restangular/0.5.1/restangular.min.js'
       ]
     styles:
       local: []
@@ -37,10 +41,10 @@ module.exports = (grunt) ->
   sourceDir = 'app' # Where the source lives
   compileDir = 'build' # Where pre-processed and minified (except JS) code lives
   buildDir = 'public' # Where fully minified and concatenated output code lives
-  configDir = 'config' # Where to put config files
-  vendorDir = 'bower_components' # Where the vendor files are originally
+  configDir = 'etc' # Where to put config files
+  vendorDir = 'bower_components' # Where the package-managed vendor files are
   tempDir = 'tmp' # Where the temporary build files live
-  entryFilename = 'main' # The entry partial to include
+  entryFilename = 'main' # Module definition must happen here
 
   # Load Grunt tasks
   grunt.loadNpmTasks 'grunt-contrib-jshint'
