@@ -59,6 +59,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-karma'
   grunt.loadNpmTasks 'grunt-ngmin'
   grunt.loadNpmTasks 'grunt-exec'
+  grunt.loadNpmTasks 'grunt-parallel'
 
   # Configuration
   grunt.initConfig
@@ -122,6 +123,15 @@ module.exports = (grunt) ->
       source:
         files: ["Gruntfile.coffee", "#{sourceDir}/**/*", "!#{sourceDir}/_#{entryFilename}.ejs", "!#{sourceDir}/vendor/**/*"]
         tasks: ['source']
+
+    ## Parallelly run watch and server
+
+    parallel:
+      development:
+        options:
+          stream: true
+          grunt: true
+        tasks: ['watch', 'exec:harpServer']
 
     ## Build-related tasks
 
@@ -335,12 +345,10 @@ module.exports = (grunt) ->
 
   ## Build tasks
 
-  # Usually you just want to run `grunt` to get the deployed code
-  grunt.registerTask 'default', ['install', 'source', 'compile', 'build']
-  # Or run the server (remember to run watch with it)
-  grunt.registerTask 'server', ['install', 'exec:harpServer']
-  # Or just install dependencies
-  grunt.registerTask 'install', ['exec:bower']
+  # Usually you just want to run `grunt` to enter development mode
+  grunt.registerTask 'default', ['exec:bower', 'parallel:development']
+  # Or deploy it
+  grunt.registerTask 'deploy', ['exec:bower', 'source', 'compile', 'build']
 
   # TODO include karma in development in `watch`
   #grunt.registerTask 'source', ['karmaconfig', 'karma:continuous']
