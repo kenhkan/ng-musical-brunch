@@ -4,4 +4,4 @@ do ->
 
   # Root controller
   module.controller 'ApplicationController', ($scope, $location) ->
-    $scope.message = 'Hello!'
+    $scope.message = 'Hello World!'
