@@ -59,7 +59,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-karma'
   grunt.loadNpmTasks 'grunt-ngmin'
   grunt.loadNpmTasks 'grunt-exec'
-  grunt.loadNpmTasks 'grunt-parallel'
+  grunt.loadNpmTasks 'grunt-concurrent'
 
   # Configuration
   grunt.initConfig
@@ -124,13 +124,12 @@ module.exports = (grunt) ->
         files: ["Gruntfile.coffee", "#{sourceDir}/**/*", "!#{sourceDir}/_#{entryFilename}.ejs", "!#{sourceDir}/vendor/**/*"]
         tasks: ['source']
 
-    ## Parallelly run watch and server
+    ## Concurrently run watch and server
 
-    parallel:
-      development:
-        options:
-          stream: true
-          grunt: true
+    concurrent:
+      options:
+        logConcurrentOutput: true
+      develop:
         tasks: ['watch', 'exec:harpServer']
 
     ## Build-related tasks
@@ -273,6 +272,9 @@ module.exports = (grunt) ->
       # the `404.html` with references to the concatenated scripts
       harpBuild:
         cmd: "node_modules/.bin/harp compile #{sourceDir} #{tempDir}"
+      # Kill the harp server and force exit peacefully no matter what
+      harpKill:
+        cmd: 'bash etc/kill_harp.sh'
 
   # Get all scripts
   filterScripts = (files) ->
@@ -346,7 +348,7 @@ module.exports = (grunt) ->
   ## Build tasks
 
   # Usually you just want to run `grunt` to enter development mode
-  grunt.registerTask 'default', ['exec:bower', 'parallel:development']
+  grunt.registerTask 'default', ['exec:bower', 'exec:harpKill', 'concurrent:develop']
   # Or deploy it
   grunt.registerTask 'deploy', ['exec:bower', 'source', 'compile', 'build']
 
