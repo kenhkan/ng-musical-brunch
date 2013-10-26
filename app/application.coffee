@@ -3,5 +3,5 @@ do ->
   module = angular.module 'boilerplate'
 
   # Root controller
-  module.controller 'AppController', ($scope, $location) ->
+  module.controller 'ApplicationController', ($scope, $location) ->
     $scope.message = 'Hello!'
