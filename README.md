@@ -28,24 +28,23 @@ work for you. :)
 
 Easy as 1-2-3:
 
-1. Run `grunt watch` to rebuild the references on file change
-2. Run `grunt server` to run the Harp server
-3. Open `localhost:9000` in your browser to view your app!
+1. Run `grunt` to rebuild the references and also do so on file change (i.e.
+   grunt-watch) and run the Harp server in the background
+2. Open `localhost:9000`
+   in your browser to view your app!
+3. Start coding!
 
 ### `grunt`
 
+Rebuild references (link) to all scripts and styles, local or remote, in
+`404.html`. Set up a watcher so it rebuilds on file change. Then run the Harp
+server so you can run the app in staging immediately.
+
+### `grunt deploy`
+
 Compile and build the project. Output code is put in `public/`. See [file
-structure](#file-structure) for more information.
-
-### `grunt watch`
-
-Watch for file changes and automatically rebuild the scripts and styles
-references
-
-### `grunt server`
-
-Run the Harp server for development (well, and
-[staging](https://harp.io/docs/platform/collaborators) too).
+structure](#file-structure) for more information. It expects this app to be
+deployed to a Harp instance.
 
 ### `grunt clean`
 
@@ -61,22 +60,24 @@ This resets the project to its pristine state.
 
 After having set up the project, the file structure would look like:
 
+    app/ -> Anything specific to the app goes here
+    bower_compoennts/ -> Downloaded Bower components
     etc/changelog.tpl -> The template for building CHANGELOG.md
     etc/404.tpl.html -> The template for building the main entry point
     etc/module_prefix.js -> The enclosing code for compiled and minified code
     etc/module_suffix.js -> The ending counterpart of `module_prefix.js`
-    app/ -> Anything specific to the app goes here
+    node_modules/ -> downloaded NPM modules
     bower.json -> Bower dependency declaration
     Gruntfile.coffee -> Gruntfile configuration
+    harp.json -> Harp configuration file
+    LICENSE -> Pretty self-explanatory
     package.json -> NPM dependency declaration
     README.md -> This document
 
-After having run `grunt`, additional directories are added:
+After having run `grunt deploy`, additional directories are added:
 
-    bower_compoennts/ -> Downloaded Bower components
     public/ -> Production-ready code (compiled, minified, uglified, and concatenated)
     build/ -> Deployment-ready code (compiled)
-    node_modules/ -> Downloaded NPM modules
     tmp/ -> Temporary directory for building. Ignore
 
 
@@ -88,15 +89,15 @@ Because developing in Angular.js requires many external libraries, package
 management should be automated using [Bower](http://bower.io/). Follow these
 steps:
 
-1. Find a package you want
-2. Add to `bower.json`
+1. Find the package you want
+2. `bower install <package_name> --save-dev`
 3. Run `grunt install`
 4. Add the specific file you want to include to `Gruntfile.coffee`, under
-`vendorFiles.scripts.local` and `vendorFiles.styles.local` for JavaScript and
-CSS files respectively
+   `vendorFiles.scripts.local` and `vendorFiles.styles.local` for JavaScript and
+   CSS files respectively
 
-If you want to include CDN-hosted libraries, simply do step #4 except add the
-URLs to `vendorFiles.scripts.remote` and `vendorFiles.styles.remote`.
+If you want to include CDN-hosted libraries, simply do step #4 and add the URLs
+to `vendorFiles.scripts.remote` and `vendorFiles.styles.remote`.
 
 ### App settings
 
@@ -106,37 +107,38 @@ Remember to edit `etc/404.tpl.html` to set the `ng-app` and top-level
 ### App file structure
 
 There is no convention here. Scripts, styles, and markups recognized by Harp
-are compiled and automatically included when `grunt watch` is running. Anything
-else is treated as assets and are transferred as-is for your deployment.
+are compiled and automatically included when `grunt` is running. Anything else
+is treated as assets and are transferred as-is for your deployment.
 
-The file `_main.ejs` is automatically managed to include references to
-compiled scripts and styles. Do *not* save a user markup file to that filename.
-This is a layout file that is automatically applied on the `404.html` file.
+The file `_main.ejs` is used to build the references to compiled scripts and
+styles. Do *not* save a user markup file to that filename.  This is a layout
+file that is automatically applied on the `404.html` file.
 
 The directory `vendor/` is reserved for third-party code that is managed by
 Bower. Your app directory could look something like:
 
-    src/vendor -> Reserved for third-party code
-    src/_main.ejs -> Automatically managed
-    src/404.jade -> Entry point
-    src/partials/login.jade -> A partial included either by Harp partial
+    app/vendor -> Reserved for third-party code
+    app/_main.ejs -> Automatically managed
+    app/404.jade -> The entry point. `ngInclude` other views here
+    app/partials/login.jade -> A partial included either by Harp partial
       mechanism or by Angular.js' ui-route. It is copied on compilation if not
       hidden.
-    src/images/logo.png -> This is automatically copied on compilation if not
+    app/images/logo.png -> This is automatically copied on compilation if not
       hidden.
     ...
 
 ### `main`
 
 The file `main.js` is always included in the `<HEAD>` first. You should always
-initialize your module there. `app.js` is by convention there to house the
-controller code for `AppController`, which is declared at `<HTML>`.
+initialize your module there. `application.js` is there to house the
+controller code for `ApplicationController`, which is declared at `<HTML>`.
 
 ### HTML5 Mode
 
 There is notably no index page but a 404 page. Modern webservers should always
-return `/404.html` without showing it as such (i.e. no redirection). This plays
-nicely with Angular.js' HTML5 which requires all requests to non-existing path
-to return the application page. Do not name any file `index` to avoid the
-webserver serving sub-views. See Angular.js' [HTML
+return `/404.html` without showing it as such (i.e. no redirection) when a
+requested file isn't found. This plays nicely with Angular.js' HTML5 which
+requires all requests to non-existing path to return the application page. Do
+not name any file `index` to avoid the webserver serving sub-views. See
+Angular.js' [HTML
 mode](http://docs.angularjs.org/guide/dev_guide.services.$location).
