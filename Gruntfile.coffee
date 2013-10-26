@@ -12,7 +12,6 @@ module.exports = (grunt) ->
       # Local files: relative to where Bower components are installed
       local: [
         'angular-bootstrap/ui-bootstrap.js'
-        'angular-mocks/angular-mocks.js'
         'angular-ui-router/release/angular-ui-router.js'
         'angular-ui-utils/modules/route/route.js'
       ]
@@ -118,7 +117,7 @@ module.exports = (grunt) ->
         livereload: true
       source:
         files: ["Gruntfile.coffee", "#{sourceDir}/**/*", "!#{sourceDir}/_#{entryFilename}.ejs", "!#{sourceDir}/vendor/**/*"]
-        tasks: ['source']
+        tasks: ['source', 'karma:unit:run']
 
     ## Concurrently run watch and server
 
@@ -192,21 +191,21 @@ module.exports = (grunt) ->
           src: '<%= files.source.coffeeTest %>'
 
     ## Testing
-    # TODO review
 
     karma:
-      options:
-        configFile: "#{configDir}/karma-unit.js"
       unit:
-        runnerPort: 9101
+        configFile: "#{configDir}/karma-unit.conf.coffee"
         background: true
+      e2e:
+        configFile: "#{configDir}/karma-e2e.conf.coffee"
       continuous:
         singleRun: true
 
-    karmaconfig:
-      unit:
-        dir: '<%= build_dir %>'
-        src: ['<%= vendor_files.js %>', '<%= html2js.app.dest %>', '<%= html2js.common.dest %>', '<%= html2js.jade_app.dest %>', '<%= html2js.jade_common.dest %>', 'vendor/angular-mocks/angular-mocks.js']
+    # TODO review
+    #karmaconfig:
+    #  unit:
+    #    dir: 
+    #    src: ['<%= vendor_files.js %>', '<%= html2js.app.dest %>', '<%= html2js.common.dest %>', '<%= html2js.jade_app.dest %>', '<%= html2js.jade_common.dest %>', 'vendor/angular-mocks/angular-mocks.js']
 
     ## Build `404.html` to include references to all JS and CSS files
 
@@ -344,9 +343,19 @@ module.exports = (grunt) ->
   ## Build tasks
 
   # Usually you just want to run `grunt` to enter development mode
-  grunt.registerTask 'default', ['exec:bower', 'exec:harpKill', 'concurrent:develop']
+  grunt.registerTask 'default', [
+    'exec:bower'
+    'exec:harpKill'
+    'karma:unit:start'
+    'concurrent:develop'
+  ]
   # Or deploy it
-  grunt.registerTask 'deploy', ['exec:bower', 'source', 'compile', 'build']
+  grunt.registerTask 'deploy', [
+    'exec:bower'
+    'source'
+    'compile'
+    'build'
+  ]
 
   # TODO include karma in development in `watch`
   #grunt.registerTask 'source', ['karmaconfig', 'karma:continuous']
