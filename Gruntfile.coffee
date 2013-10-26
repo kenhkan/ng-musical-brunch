@@ -21,10 +21,6 @@ module.exports = (grunt) ->
         'https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js'
         'https://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js'
         'https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js'
-        # Recommended libraries
-        #'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.2.1/lodash.min.js'
-        #'https://cdnjs.cloudflare.com/ajax/libs/restangular/0.5.1/dependencies/angular-resource.min.js'
-        #'https://cdnjs.cloudflare.com/ajax/libs/restangular/0.5.1/restangular.min.js'
       ]
     styles:
       local: []
