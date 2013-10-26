@@ -4,30 +4,24 @@
 module.exports = (config) ->
   config.set
     # base path, that will be used to resolve files and exclude
-    basePath: '../'
+    basePath: '..'
 
-    # testing frameworks
-    frameworks: ['jasmine']
+    # required frameworks
+    frameworks: [
+      'jasmine'
+      'requirejs'
+    ]
 
     # list of files / patterns to load in the browser
     files: [
-      'bower_components/angular/angular.js'
-      'bower_components/angular-mocks/angular-mocks.js'
-      'bower_components/angular-ui-router/release/angular-ui-router.js'
-      'bower_components/angular-ui-utils/modules/route/route.js'
-      'app/main.coffee'
-      'app/**/*.js'
-      'app/**/*.coffee'
-    ]
-
-    # list of files to exclude
-    exclude: [
-      'app/vendor/**/*.js'
+      { pattern: 'app/main.js' }
+      { pattern: 'app/**/*.js', included: false }
+      { pattern: 'app/**/*.coffee', included: false }
     ]
 
     # files to preprocess before testing
     preprocessors:
-      'app/**/*.coffee': ['coffee']
+      '**/*.coffee': ['coffee']
 
     coffeePreprocessor:
       options:
@@ -80,9 +74,3 @@ module.exports = (config) ->
     # report which specs are slower than 500ms
     # CLI --report-slower-than 500
     reportSlowerThan: 500
-    plugins: [
-      'karma-jasmine'
-      'karma-chrome-launcher'
-      'karma-firefox-launcher'
-      'karma-coffee-preprocessor'
-    ]

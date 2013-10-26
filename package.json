@@ -28,6 +28,7 @@
     "lodash": "~2.2.1",
     "grunt-concurrent": "~0.4.1",
     "karma-phantomjs-launcher": "~0.1.0",
-    "phantomjs": "~1.9.2-2"
+    "phantomjs": "~1.9.2-2",
+    "grunt-bower-requirejs": "~0.7.1"
   }
 }

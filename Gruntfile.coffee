@@ -11,15 +11,15 @@ module.exports = (grunt) ->
     scripts:
       # Local files: relative to where Bower components are installed
       local: [
-        'angular-bootstrap/ui-bootstrap.js'
-        'angular-ui-router/release/angular-ui-router.js'
-        'angular-ui-utils/modules/route/route.js'
+        #'angular-bootstrap/ui-bootstrap.js'
+        #'angular-ui-router/release/angular-ui-router.js'
+        #'angular-ui-utils/modules/route/route.js'
       ]
       # Remote files: absolute HTTP(S) URLs
       remote: [
-        'https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js'
-        'https://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js'
-        'https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js'
+        #'https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js'
+        #'https://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js'
+        #'https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js'
       ]
     styles:
       local: []
@@ -55,6 +55,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-ngmin'
   grunt.loadNpmTasks 'grunt-exec'
   grunt.loadNpmTasks 'grunt-concurrent'
+  grunt.loadNpmTasks 'grunt-bower-requirejs'
 
   # Configuration
   grunt.initConfig
@@ -67,16 +68,16 @@ module.exports = (grunt) ->
     files:
       vendor: vendorFiles
       source:
-        js: ["#{sourceDir}/**/*.js", "!#{sourceDir}/**/*.spec.js"]
-        jsTest: ["!#{sourceDir}/**/*.spec.js"]
+        js: ["#{sourceDir}/**/*.js", "!#{sourceDir}/**/*.spec.js", "!#{sourceDir}/vendor/**/*.spec.js"]
+        jsTest: ["#{sourceDir}/**/*.spec.js"]
         coffee: ["#{sourceDir}/**/*.coffee", "!#{sourceDir}/**/*.spec.coffee"]
         coffeeTest: ["!#{sourceDir}/**/*.spec.coffee"]
         css: ["#{sourceDir}/**/*.{css,styl,less}"]
         # Non-script/style assets
         assets: ["**/*.!(js|css|spec)"]
       compile:
-        js: ["#{compileDir}/**/*.js", "!#{compileDir}/**/*.spec.js"]
-        jsTest: ["!#{compileDir}/**/*.spec.js"]
+        js: ["#{compileDir}/**/*.js", "!#{compileDir}/**/*.spec.js", "!#{compileDir}/vendor/**/*.spec.js"]
+        jsTest: ["#{compileDir}/**/*.spec.js"]
         css: ["#{compileDir}/**/*.css"]
 
     # Metadata like the banner to be inserted above released source code
@@ -104,10 +105,14 @@ module.exports = (grunt) ->
 
     # Clean house
     clean:
-      source: ["#{sourceDir}/vendor"]
-      compile: ["#{compileDir}/vendor"]
       build: [buildDir, tempDir]
       all: [compileDir, buildDir, tempDir, "#{sourceDir}/_#{entryFilename}.ejs"]
+
+    ## Dependency management
+
+    bower:
+      target:
+        rjsConfig: 'app/main.js'
 
     ## Watch for development
 
@@ -119,8 +124,7 @@ module.exports = (grunt) ->
         files: ["Gruntfile.coffee", "#{sourceDir}/**/*", "!#{sourceDir}/_#{entryFilename}.ejs", "!#{sourceDir}/vendor/**/*"]
         tasks: ['source', 'karma:unit:run']
 
-    ## Concurrently run watch and server
-
+    # Concurrently run watch and server
     concurrent:
       options:
         logConcurrentOutput: true
@@ -195,7 +199,6 @@ module.exports = (grunt) ->
     karma:
       unit:
         configFile: "#{configDir}/karma-unit.conf.coffee"
-        background: true
       e2e:
         configFile: "#{configDir}/karma-e2e.conf.coffee"
       continuous:
@@ -210,32 +213,26 @@ module.exports = (grunt) ->
     ## Build `404.html` to include references to all JS and CSS files
 
     copy:
-      # Copy over local vendor files
-      vendorToSource:
-        expand: true
-        flatten: true
-        cwd: vendorDir
-        src: ['<%= files.vendor.scripts.local %>']
-        dest: "#{sourceDir}/vendor/"
-      # Same for compiling
+      # Copy over the vendor files to the compilation directory
       vendorToCompile:
         expand: true
         flatten: true
         cwd: vendorDir
         src: ['<%= files.vendor.scripts.local %>']
         dest: "#{compileDir}/vendor/"
+      # Same for building
+      vendorToBuild:
+        expand: true
+        flatten: true
+        cwd: vendorDir
+        src: ['<%= files.vendor.scripts.local %>']
+        dest: "#{buildDir}/vendor/"
       # Copy over the assets from compile to build
       assetsToBuild:
         expand: true
         cwd: compileDir
         src: '<%= files.source.assets %>'
         dest: buildDir
-      # Copy the built assets as vendor files to source
-      buildToSource:
-        expand: true
-        cwd: "#{buildDir}/vendor"
-        src: '*'
-        dest: "#{sourceDir}/vendor"
       # Copy over from compile directory for building
       buildEntry:
         src: "#{tempDir}/404.html"
@@ -294,9 +291,13 @@ module.exports = (grunt) ->
     styles = filterStyles(@filesSrc).map (file) ->
       file.replace extractRE, '$1.css'
 
-    # Always put `main` script first
+    # Put the `main` script at the beginning
     _.remove scripts, (script) -> script is "#{entryFilename}.js"
     scripts.unshift "#{entryFilename}.js"
+
+    # But always put RequireJS first
+    scripts.unshift 'main.js'
+    scripts.unshift 'vendor/requirejs/require.js'
 
     # Filter out for only vendor script/style
     if match
@@ -344,17 +345,23 @@ module.exports = (grunt) ->
 
   # Usually you just want to run `grunt` to enter development mode
   grunt.registerTask 'default', [
-    'exec:bower'
+    'setup'
     'exec:harpKill'
     'karma:unit:start'
     'concurrent:develop'
   ]
   # Or deploy it
   grunt.registerTask 'deploy', [
-    'exec:bower'
+    'setup'
     'source'
     'compile'
     'build'
+  ]
+
+  # Setup
+  grunt.registerTask 'setup', [
+    'exec:bower'
+    'bower'
   ]
 
   # TODO include karma in development in `watch`
@@ -362,20 +369,15 @@ module.exports = (grunt) ->
 
   # Make sure our HTML is referencing all our scripts and styles
   grunt.registerTask 'source', [
-    'clean:source' # Clean the source directory first
     'coffeelint' # Then check CoffeeScripts are style-compliant
-    'copy:vendorToSource' # Copy over the vendor files
+    'jshint' # Check JS compliance
     'entry:source' # Build `404.html`
   ]
 
   # Compile for delivery (but not minified)
   grunt.registerTask 'compile', [
-    'clean:compile' # Clean the compile directory
-    'clean:source' # Clean the source directory as well because we need to compile from source
     'exec:harpCompile' # Because we're compiling from source
-    'jshint' # Check JS compliance
     'copy:vendorToCompile' # Copy over vendor files
-    'copy:vendorToSource' # Copy over vendor files back to source because of `clean:source`
   ]
 
   # The ultimate deployment package
@@ -389,9 +391,7 @@ module.exports = (grunt) ->
     'uglify' # Uglify the files for production
 
     # We then need to compile the HTML with references to the packaged assets (only the script and the style)
-    'clean:source' # Clean the source directory because we need to compile from source
-    'copy:buildToSource' # Copy over the the built assets as vendor files to source
-    'entry:source:^vendor' # Build the `404.html`
+    'copy:vendorToBuild' # Copy over vendor files
     'exec:harpBuild' # Compile the `404.html` to the temporary directory
     'copy:buildEntry' # Transfer only the built `404.html` over to the build directory
     'copy:assetsToBuild' # Copy assets to the build directory

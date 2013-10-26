@@ -11,7 +11,8 @@
     "jquery": "~2.0.3",
     "angular-resource": "~1.0.8",
     "restangular": "~1.1.6",
-    "lodash": "~2.2.1"
+    "lodash": "~2.2.1",
+    "requirejs": "~2.1.9"
   },
   "dependencies": {}
 }
