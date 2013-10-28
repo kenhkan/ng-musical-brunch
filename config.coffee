@@ -35,11 +35,9 @@ exports.config =
         '_jade_templates.js': /^app/
 
   plugins:
-    jade:
-      pretty: true
     jade_angular:
       # Only care about 404 because of Angular's HTML5 mode
-      static_mask: /^404.jade/
+      static_mask: /404/
       # All templates should be in one single file
       single_file: true
       single_file_name: 'templates.js'
