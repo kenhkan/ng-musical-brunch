@@ -33,10 +33,11 @@ run your AngularJS app locally as staging? No problem.
 
 Easy as 1-2-3:
 
-1. Run `grunt` to get Karma running, watching for file changes, and a Harp
+1. Set the environment variable `APP_NAME` to your app's name. It will be
+   passed to `ng-app`.
+2. Run `grunt` to get Karma running, watching for file changes, and a Harp
    server running in the background
-2. Open `localhost:9000` in the newly Karma-opened browser to view your app
-3. Start coding!
+3. Open `localhost:9000` in the newly Karma-opened browser to view your app
 
 ### `grunt`
 
