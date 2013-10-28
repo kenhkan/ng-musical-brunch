@@ -1,6 +1,3 @@
-# Adapted from Karma's example config file at
-# https://github.com/karma-runner/karma/blob/master/test/client/karma.conf.js
-
 module.exports = (config) ->
   config.set
     # base path, that will be used to resolve files and exclude
@@ -9,14 +6,19 @@ module.exports = (config) ->
     # required frameworks
     frameworks: [
       'jasmine'
-      'requirejs'
     ]
 
     # list of files / patterns to load in the browser
     files: [
-      { pattern: 'app/main.js' }
-      { pattern: 'app/**/*.js', included: false }
-      { pattern: 'app/**/*.coffee', included: false }
+      # Dependencies
+      'public/vendor.js'
+      # Templates
+      'public/templates.js'
+      # Application code
+      'public/app.js'
+      # Spec code
+      'app/**/*.spec.js'
+      'app/**/*.spec.coffee'
     ]
 
     # files to preprocess before testing

@@ -2,7 +2,7 @@ describe 'titleService', () ->
   $document = null
   titleService = null
 
-  beforeEach module( 'titleService' )
+  beforeEach angular.mock.module( 'titleService' )
 
   beforeEach inject( ( _$document_, _titleService_ ) ->
     $document = _$document_
