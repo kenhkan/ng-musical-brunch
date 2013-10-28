@@ -107,7 +107,6 @@ module.exports = (grunt) ->
   grunt.registerTask 'default', [
     'init'
     'exec:harpKill'
-    'exec:brunchCompile'
     'concurrent:develop'
   ]
 
