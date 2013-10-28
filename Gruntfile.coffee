@@ -54,12 +54,9 @@ module.exports = (grunt) ->
     # Testing
     karma:
       options:
+        configFile: "#{configDir}/karma.conf.coffee"
         browsers: ['PhantomJS']
         reporters: 'dots'
-      unit:
-        configFile: "#{configDir}/karma-unit.conf.coffee"
-      e2e:
-        configFile: "#{configDir}/karma-e2e.conf.coffee"
       continuous:
         singleRun: true
 
@@ -98,6 +95,13 @@ module.exports = (grunt) ->
     'exec:harpKill'
     'exec:brunchCompile'
     'concurrent:develop'
+  ]
+
+  # Continuous integration mode
+  grunt.registerTask 'continuous', [
+    'init'
+    'exec:brunchCompile'
+    'karma:continuous:start'
   ]
 
   # Build for production
