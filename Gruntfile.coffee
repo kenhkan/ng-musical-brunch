@@ -57,6 +57,8 @@ module.exports = (grunt) ->
         configFile: "#{configDir}/karma.conf.coffee"
         browsers: ['PhantomJS']
         reporters: 'dots'
+      unit:
+        browsers: ['ChromeCanary']
       continuous:
         singleRun: true
 
