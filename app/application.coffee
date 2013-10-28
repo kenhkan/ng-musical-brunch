@@ -1,5 +1,5 @@
 # Define the module and dependencies
-module = angular.module 'boilerplate'
+module = angular.module '$PROCESS_ENV_APP_NAME'
 
 # Root controller
 module.controller 'ApplicationController', ($scope, $location) ->

@@ -1,5 +1,5 @@
 # Define the module and dependencies
-module = angular.module 'boilerplate', [
+module = angular.module '$PROCESS_ENV_APP_NAME', [
   'app.templates'
   'ui.state'
   'ui.router'
@@ -16,4 +16,4 @@ module.config ($locationProvider, $stateProvider, $urlRouterProvider) ->
 
 # Entry point
 module.run (titleService) ->
-  titleService.setSuffix ' | Boilerplate'
+  titleService.setSuffix ' | $PROCESS_ENV_APP_NAME'

@@ -114,8 +114,8 @@ Because developing in Angular.js requires many external libraries, package
 management should be automated using [Bower](http://bower.io/). Follow these
 steps:
 
-1. Find the package you want by running `bower search <package_name>`
-2. `bower install --save <package_name>`
+1. Find the package you want by running `bower search <package-name>`
+2. `bower install --save <package-name>`
 3. That's it! :D
 
 ### HTML5 Mode
@@ -138,20 +138,27 @@ info.
 ### App file structure
 
 There is no convention here. Scripts, styles, and markups are compiled to
-`public/` with relative path left intact. Anything under `assets/` is treated
-as assets and are transferred as-is to the top-level directory under `public/`.
+`public/`. Anything under `assets/` is treated as assets and are transferred
+as-is to the top-level directory under `public/`.
+
+### Environment variables
+
+[process-env-brunch](https://github.com/mikeedwards/process-env-brunch) is used
+to scan through all compiled files for `$PROCESS_ENV_<name-here>` and take the
+value from `process.env[<name-here>]` as a replacement.
 
 ### App settings
 
-Remember to change the following to your app's settings:
+ng-musical-brunch reads your environment variables to fill some the blanks:
 
-* In `app/404.jade`:
-  * The app name in `ng-app`
-  * The social media tags
-  * Include your views in `body`
-* In `app/application.coffee`:
-  * The app name in `angular.module`
-* In `app/main.coffee`:
-  * The app name in `angular.module`
-  * Your dependent AngularJS modules
-  * Set suffix for the title service
+* APP_NAME: the name of the app that will be passed to AngularJS
+* TWITTER_HANDLE: ditto
+* CREATOR_HANDLE: the creator's Twitter handle
+* CARD_SUMMARY: a summary for Twitter card
+* CARD_TITLE: ditto
+* CARD_DESCRIPTION: ditto
+* CARD_IMAGE: the URL pointing to an image for the card
+* CARD_URL: the URL pointing to any page
+
+Aside from these variables, remember to update your AngularJS dependencies in
+`app/main.coffee`.
