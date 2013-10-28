@@ -11,13 +11,17 @@ exports.config =
   files:
     javascripts:
       joinTo:
+        # Non-spec scripts are application code
         'app.js': /^app\/(?!.+\.spec\.)/
+        # Anything managed by Bower is vendor code
         'vendor.js': /^(bower_components|vendor)/
       order:
         before: [
+          # Essential libraries
           'bower_components/lodash/lodash.js'
           'bower_components/jquery/jquery.js'
           'bower_components/angular/angular.js'
+          # Entry point
           'app/main.coffee'
         ]
 
@@ -34,6 +38,8 @@ exports.config =
     jade:
       pretty: true
     jade_angular:
-      static_mask: /404.jade/
+      # Only care about 404 because of Angular's HTML5 mode
+      static_mask: /^404.jade/
+      # All templates should be in one single file
       single_file: true
       single_file_name: 'templates.js'
