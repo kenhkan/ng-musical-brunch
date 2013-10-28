@@ -46,8 +46,8 @@ module.exports = (grunt) ->
     watch:
       options:
         livereload: true
-      # Build and run test case
-      develop:
+      # Run test case
+      test:
         files: ["#{sourceDir}/**/*"]
         tasks: ['karma:unit:run']
 
@@ -74,7 +74,7 @@ module.exports = (grunt) ->
         # Re-assemble on change
         'exec:brunchWatch'
         # Run tests on change
-        'watch'
+        'watch:test'
         # Run local web server
         'exec:harpServer'
       ]
