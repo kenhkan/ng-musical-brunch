@@ -13,6 +13,8 @@ exports.config =
       joinTo:
         # Non-spec scripts are application code
         'app.js': /^app\/(?!.+\.spec\.)/
+        # Specs are compiled into another file by themselves
+        'spec.js': /^app\/.+\.spec\./
         # Anything managed by Bower is vendor code
         'vendor.js': /^(bower_components|vendor)/
       order:
