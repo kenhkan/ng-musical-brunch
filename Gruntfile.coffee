@@ -49,7 +49,7 @@ module.exports = (grunt) ->
       # Build and run test case
       develop:
         files: ["#{sourceDir}/**/*"]
-        tasks: ['exec:brunchCompile', 'karma:unit:run']
+        tasks: ['karma:unit:run']
 
     # Testing
     karma:
@@ -65,10 +65,19 @@ module.exports = (grunt) ->
     # Concurrently run watch and server
     concurrent:
       options:
-        limit: 3
+        limit: 4
         logConcurrentOutput: true
       # When developing, just run the server and watch for changes
-      develop: ['watch', 'karma:unit:start', 'exec:harpServer']
+      develop: [
+        # Start the Karma server
+        'karma:unit:start'
+        # Re-assemble on change
+        'exec:brunchWatch'
+        # Run tests on change
+        'watch'
+        # Run local web server
+        'exec:harpServer'
+      ]
 
     ## Execute arbitrary commands
 
@@ -82,6 +91,9 @@ module.exports = (grunt) ->
       # Build for production with Brunch
       brunchBuild:
         cmd: 'node_modules/.bin/brunch build -P'
+      # Watch for changes for re-assembly
+      brunchWatch:
+        cmd: 'node_modules/.bin/brunch watch'
       # Run Harp server
       harpServer:
         cmd: "node_modules/.bin/harp server #{buildDir}"
