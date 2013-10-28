@@ -1,8 +1,5 @@
 *.sw*
 *~
 /node_modules
-/build
+/bower_components
 /public
-/tmp
-/app/_main.ejs
-/app/vendor

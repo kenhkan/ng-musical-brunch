@@ -9,4 +9,4 @@ describe 'ApplicationController', ->
       $scope: scope
 
   it 'says hello', ->
-    expect(scope.message).toEqual 'Hello World!'
+    assert.equal scope.message, 'Hello World!'
