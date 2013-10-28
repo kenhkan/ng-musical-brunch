@@ -17,8 +17,7 @@ module.exports = (config) ->
       # Application code
       'public/app.js'
       # Spec code
-      'app/**/*.spec.js'
-      'app/**/*.spec.coffee'
+      'app/**/*.spec.*'
     ]
 
     # files to preprocess before testing
