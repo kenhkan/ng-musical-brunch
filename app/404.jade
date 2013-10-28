@@ -1,21 +1,21 @@
 !!! 5
-html(ng-app='$PROCESS_ENV_APP_NAME', ng-controller='ApplicationController')
+html(ng-app=$PROCESS_ENV_APP_NAME, ng-controller='ApplicationController')
   head
     meta(charset='utf-8' )
     meta(http-equiv='X-UA-Compatible', content='IE=edge,chrome=1')
 
     //- Social media tags
-    meta(name='twitter:card', content='$PROCESS_ENV_CARD_SUMMARY')
-    meta(name='twitter:site', content='@$PROCESS_ENV_TWITTER_HANDLE')
-    meta(name='twitter:title', content='$PROCESS_ENV_CARD_TITLE')
-    meta(name='twitter:description', content='$PROCESS_ENV_CARD_DESCRIPTION')
-    meta(name='twitter:creator', content='@$PROCESS_ENV_CREATOR_HANDLE')
-    meta(name='twitter:image:src', content='$PROCESS_ENV_CARD_IMAGE')
-    meta(property='og:title', content='$PROCESS_ENV_CARD_TITLE')
+    meta(name='twitter:card', content=$PROCESS_ENV_CARD_SUMMARY)
+    meta(name='twitter:site', content=$PROCESS_ENV_TWITTER_HANDLE)
+    meta(name='twitter:title', content=$PROCESS_ENV_CARD_TITLE)
+    meta(name='twitter:description', content=$PROCESS_ENV_CARD_DESCRIPTION)
+    meta(name='twitter:creator', content=$PROCESS_ENV_CREATOR_HANDLE)
+    meta(name='twitter:image:src', content=$PROCESS_ENV_CARD_IMAGE)
+    meta(property='og:title', content=$PROCESS_ENV_CARD_TITLE)
     meta(property='og:type', content='website')
-    meta(property='og:url', content='$PROCESS_ENV_CARD_URL')
-    meta(property='og:image', content='$PROCESS_ENV_CARD_IMAGE')
-    meta(property='og:description', content='$PROCESS_ENV_CARD_DESCRIPTION')
+    meta(property='og:url', content=$PROCESS_ENV_CARD_URL)
+    meta(property='og:image', content=$PROCESS_ENV_CARD_IMAGE)
+    meta(property='og:description', content=$PROCESS_ENV_CARD_DESCRIPTION)
 
     //- Stylesheets and scripts
     link(rel='favicon.ico', href='favicon.ico')
