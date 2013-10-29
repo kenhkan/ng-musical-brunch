@@ -150,9 +150,10 @@ value from `process.env[<name-here>]` as a replacement.
 
 ### App settings
 
-ng-musical-brunch reads your environment variables to fill some the blanks:
+Open up `app/404.jade` and update the following to your app's settings:
 
-* APP_NAME: the name of the app that will be passed to AngularJS
+* APP_NAME: the name of the app that will be passed to AngularJS. You should
+  also set this as an environment variable
 * TWITTER_HANDLE: ditto
 * CREATOR_HANDLE: the creator's Twitter handle
 * CARD_SUMMARY: a summary for Twitter card

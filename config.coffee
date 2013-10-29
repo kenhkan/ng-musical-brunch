@@ -45,7 +45,3 @@ exports.config =
       single_file_name: 'templates.js'
     process_env:
       raw: true
-      custom_sources: [
-        # Need to manually process 404 because it's compiled as-is
-        'app/404.jade'
-      ]
