@@ -31,13 +31,17 @@ run your AngularJS app locally as staging? No problem.
 
 ## Usage
 
-Easy as 1-2-3:
+Easy as 1-2-3-4-5:
 
-1. Set the environment variable `APP_NAME` to your app's name. It will be
-   passed to `ng-app`.
-2. Run `grunt` to get Karma running, watching for file changes, and a Harp
+1. Open up `404.jade` and edit the `$PROCESS_ENV` variables. In the future
+   these will be populated using environment variables. See [app
+   settings](#app-settings) for more info.
+2. Replace `$APP_NAME` with your app name. This will be automated
+   in a setup script in the future.
+3. Set the environment variable `APP_NAME` to your app's name
+4. Run `grunt` to get Karma running, watching for file changes, and a Harp
    server running in the background
-3. Open `localhost:9000` in the newly Karma-opened browser to view your app
+5. Open `localhost:9000` in the newly Karma-opened browser to view your app
 
 ### `grunt`
 
@@ -152,8 +156,7 @@ value from `process.env[<name-here>]` as a replacement.
 
 Open up `app/404.jade` and update the following to your app's settings:
 
-* APP_NAME: the name of the app that will be passed to AngularJS. You should
-  also set this as an environment variable
+* APP_NAME: the name of the app that will be passed to AngularJS
 * TWITTER_HANDLE: ditto
 * CREATOR_HANDLE: the creator's Twitter handle
 * CARD_SUMMARY: a summary for Twitter card
