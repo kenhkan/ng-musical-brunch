@@ -39,6 +39,7 @@
     "grunt-concurrent": "~0.4.1",
     "jshint-brunch": "~1.6.0",
     "coffeelint-brunch": "~1.5.0",
-    "process-env-brunch": "~1.4.4-d"
+    "process-env-brunch": "~1.4.4-d",
+    "jade": "~0.35.0"
   }
 }
