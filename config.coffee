@@ -43,3 +43,9 @@ exports.config =
       # All templates should be in one single file
       single_file: true
       single_file_name: 'templates.js'
+    process_env:
+      raw: true
+      custom_sources: [
+        # Need to manually process 404 because it's compiled as-is
+        'app/404.jade'
+      ]
