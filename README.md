@@ -3,6 +3,10 @@
 You should develop AngularJS without having to set anything up. This is the
 only AngularJS development stack you will ever need!
 
+NOTE: This skeleton uses Harp.js and Brunch.IO.
+[ng-brunch](https://github.com/kenhkan/ng-brunch) uses only Brunch.IO and you
+could still include a `app/assets/_harp.json` to make it work on Harp.io.
+
 
 ## Motivation
 
