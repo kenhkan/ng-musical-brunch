@@ -1,4 +1,4 @@
-# Worry-free AngularJS Development Stack <br/>[![Dependency Status](https://david-dm.org/kenhkan/ng-musical-brunch.png)](https://david-dm.org/kenhkan/ng-musical-brunch) [![Stories in Ready](https://badge.waffle.io/kenhkan/ng-musical-brunch.png)](http://waffle.io/kenhkan/ng-musical-brunch)
+# DEPRECATED -- See [angular-curve](https://github.com/kenhkan/angular-curve)
 
 You should develop AngularJS without having to set anything up. This is the
 only AngularJS development stack you will ever need!
